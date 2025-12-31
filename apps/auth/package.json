@@ -1,0 +1,24 @@
+{
+  "name": "auth",
+  "module": "./src/index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "bun run --watch src/index.ts",
+    "build": "bun build src/index.ts --outdir=dist --target=bun --minify",
+    "start": "bun src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "auth:schema": "npx @better-auth/cli generate --output ./src/schema/auth.ts"
+  },
+  "devDependencies": {
+    "@arcle/typescript-config": "workspace:*",
+    "@types/bun": "^1.3.5",
+    "drizzle-kit": "^0.31.8",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "better-auth": "^1.4.9",
+    "drizzle-orm": "^0.45.1",
+    "hono": "^4.11.3"
+  }
+}

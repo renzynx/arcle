@@ -1,6 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  transpilePackages: ["@workspace/ui"],
+  transpilePackages: ["@arcle/ui"],
+  experimental: {
+    optimizePackageImports: ["@phosphor-icons/react"],
+  }
 }
 
 export default nextConfig
