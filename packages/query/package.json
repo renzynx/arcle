@@ -1,0 +1,27 @@
+{
+  "name": "@arcle/query",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.80.8",
+    "react": "catalog:"
+  },
+  "devDependencies": {
+    "@arcle/typescript-config": "workspace:*",
+    "@types/react": "catalog:",
+    "typescript": "catalog:"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./*": "./src/*.tsx"
+  },
+  "peerDependencies": {
+    "react": ">=18"
+  }
+}

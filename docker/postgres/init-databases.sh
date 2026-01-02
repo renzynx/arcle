@@ -1,0 +1,11 @@
+#!/bin/bash
+set -e
+
+psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
+    CREATE DATABASE arcle_auth;
+    CREATE DATABASE arcle_catalog;
+    CREATE DATABASE arcle_users;
+    GRANT ALL PRIVILEGES ON DATABASE arcle_auth TO $POSTGRES_USER;
+    GRANT ALL PRIVILEGES ON DATABASE arcle_catalog TO $POSTGRES_USER;
+    GRANT ALL PRIVILEGES ON DATABASE arcle_users TO $POSTGRES_USER;
+EOSQL

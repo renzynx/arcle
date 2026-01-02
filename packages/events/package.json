@@ -1,0 +1,25 @@
+{
+  "name": "@arcle/events",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "ioredis": "catalog:backend",
+    "superjson": "catalog:backend",
+    "zod": "catalog:backend"
+  },
+  "devDependencies": {
+    "@arcle/typescript-config": "workspace:*",
+    "@types/bun": "catalog:",
+    "typescript": "catalog:"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./*": "./src/*.ts"
+  }
+}

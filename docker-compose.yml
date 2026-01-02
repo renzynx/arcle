@@ -1,0 +1,241 @@
+x-service-common: &service-common
+  restart: unless-stopped
+  networks:
+    - arcle-network
+  environment: &common-env
+    REDIS_URL: redis://redis:6379
+    AUTH_JWKS_URL: http://auth:4000/api/auth/jwks
+    TYPESENSE_HOST: typesense
+    TYPESENSE_PORT: 8108
+    TYPESENSE_PROTOCOL: http
+    TYPESENSE_API_KEY: arcle-typesense-key
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: arcle-postgres
+    environment:
+      POSTGRES_USER: arcle
+      POSTGRES_PASSWORD: arcle
+      POSTGRES_DB: arcle
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init-databases.sh:/docker-entrypoint-initdb.d/init-databases.sh:ro
+    networks:
+      - arcle-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U arcle"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: arcle-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - arcle-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  typesense:
+    image: typesense/typesense:27.1
+    container_name: arcle-typesense
+    profiles:
+      - typesense
+    environment:
+      TYPESENSE_API_KEY: arcle-typesense-key
+      TYPESENSE_DATA_DIR: /data
+      TYPESENSE_ENABLE_CORS: "true"
+    ports:
+      - "8108:8108"
+    volumes:
+      - typesense_data:/data
+    networks:
+      - arcle-network
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8108/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  gateway:
+    <<: *service-common
+    build:
+      context: .
+      dockerfile: Dockerfile.service
+      args:
+        SERVICE_NAME: gateway
+        SEARCH_PROVIDER: ${SEARCH_PROVIDER:-postgres}
+    container_name: arcle-gateway
+    ports:
+      - "3000:3000"
+    environment:
+      <<: *common-env
+      GATEWAY_PORT: 3000
+      AUTH_URL: http://auth:4000
+      USERS_URL: http://users:5000
+      CATALOG_URL: http://catalog:6000
+      MEDIA_URL: http://media:7000
+      ALLOWED_ORIGINS: http://localhost:8000,http://localhost:9000
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  auth:
+    <<: *service-common
+    build:
+      context: .
+      dockerfile: Dockerfile.service
+      args:
+        SERVICE_NAME: auth
+        SEARCH_PROVIDER: ${SEARCH_PROVIDER:-postgres}
+    container_name: arcle-auth
+    ports:
+      - "4000:4000"
+    environment:
+      <<: *common-env
+      AUTH_PORT: 4000
+      DATABASE_URL: postgres://arcle:arcle@postgres:5432/arcle_auth
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:-change-me-in-production}
+      BETTER_AUTH_URL: ${BETTER_AUTH_URL:-http://localhost:4000}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  users:
+    <<: *service-common
+    build:
+      context: .
+      dockerfile: Dockerfile.service
+      args:
+        SERVICE_NAME: users
+        SEARCH_PROVIDER: ${SEARCH_PROVIDER:-postgres}
+    container_name: arcle-users
+    ports:
+      - "5000:5000"
+    environment:
+      <<: *common-env
+      USERS_PORT: 5000
+      DATABASE_URL: postgres://arcle:arcle@postgres:5432/arcle_users
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  catalog:
+    <<: *service-common
+    build:
+      context: .
+      dockerfile: Dockerfile.service
+      args:
+        SERVICE_NAME: catalog
+        SEARCH_PROVIDER: ${SEARCH_PROVIDER:-postgres}
+    container_name: arcle-catalog
+    ports:
+      - "6000:6000"
+    environment:
+      <<: *common-env
+      CATALOG_PORT: 6000
+      DATABASE_URL: postgres://arcle:arcle@postgres:5432/arcle_catalog
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  media:
+    <<: *service-common
+    build:
+      context: .
+      dockerfile: Dockerfile.service
+      args:
+        SERVICE_NAME: media
+        SEARCH_PROVIDER: ${SEARCH_PROVIDER:-postgres}
+    container_name: arcle-media
+    ports:
+      - "7000:7000"
+    environment:
+      <<: *common-env
+      MEDIA_PORT: 7000
+      DATABASE_URL: postgres://arcle:arcle@postgres:5432/arcle_catalog
+    volumes:
+      - media_uploads:/app/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  worker:
+    <<: *service-common
+    build:
+      context: .
+      dockerfile: Dockerfile.service-worker
+      args:
+        SERVICE_NAME: worker
+        SEARCH_PROVIDER: ${SEARCH_PROVIDER:-postgres}
+    container_name: arcle-worker
+    environment:
+      <<: *common-env
+      CATALOG_DATABASE_URL: postgres://arcle:arcle@postgres:5432/arcle_catalog
+    volumes:
+      - media_uploads:/app/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  web:
+    <<: *service-common
+    build:
+      context: .
+      dockerfile: Dockerfile.nextjs
+      args:
+        APP_NAME: web
+    container_name: arcle-web
+    ports:
+      - "8000:3000"
+    environment:
+      GATEWAY_URL: http://gateway:3000
+      NEXT_PUBLIC_GATEWAY_URL: ${NEXT_PUBLIC_GATEWAY_URL:-http://localhost:3000}
+    depends_on:
+      - gateway
+
+  admin:
+    <<: *service-common
+    build:
+      context: .
+      dockerfile: Dockerfile.nextjs
+      args:
+        APP_NAME: admin
+    container_name: arcle-admin
+    ports:
+      - "9000:3000"
+    environment:
+      GATEWAY_URL: http://gateway:3000
+      NEXT_PUBLIC_GATEWAY_URL: ${NEXT_PUBLIC_GATEWAY_URL:-http://localhost:3000}
+    depends_on:
+      - gateway
+
+volumes:
+  postgres_data:
+  redis_data:
+  typesense_data:
+  media_uploads:
+
+networks:
+  arcle-network:
+    driver: bridge

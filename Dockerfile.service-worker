@@ -1,0 +1,31 @@
+# For services that need native modules (sharp/libvips): worker
+FROM oven/bun:1.3.5-alpine AS builder
+WORKDIR /app
+
+COPY . .
+RUN bun install --frozen-lockfile
+
+ARG SERVICE_NAME
+ARG SEARCH_PROVIDER=postgres
+
+RUN sed -i "s/\"FEATURES.SEARCH_PROVIDER\" = \"'postgres'\"/\"FEATURES.SEARCH_PROVIDER\" = \"'${SEARCH_PROVIDER}'\"/" bunfig.toml
+
+RUN bun build services/${SERVICE_NAME}/src/index.ts \
+    --outdir=dist \
+    --target=bun \
+    --minify \
+    --external sharp
+
+FROM oven/bun:1.3.5-alpine AS runner
+WORKDIR /app
+
+RUN addgroup --system --gid 1001 arcle && \
+    adduser --system --uid 1001 arcle
+
+COPY --from=builder --chown=arcle:arcle /app/dist ./dist
+
+RUN bun add sharp@0.34.5 && rm -rf ~/.bun/install/cache
+
+USER arcle
+
+CMD ["bun", "run", "dist/index.js"]

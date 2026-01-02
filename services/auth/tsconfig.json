@@ -1,0 +1,9 @@
+{
+  "extends": "@arcle/typescript-config/bun.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
+}

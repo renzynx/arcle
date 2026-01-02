@@ -1,0 +1,40 @@
+{
+  "name": "catalog",
+  "module": "./src/index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "bun run --watch src/index.ts",
+    "build": "bun build src/index.ts --outdir=dist --target=bun --minify",
+    "start": "bun src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "db:push": "bunx --bun drizzle-kit push",
+    "db:gen": "bunx --bun drizzle-kit generate",
+    "db:migrate": "bunx --bun drizzle-kit migrate"
+  },
+  "devDependencies": {
+    "@arcle/typescript-config": "workspace:*",
+    "@types/bun": "catalog:",
+    "drizzle-kit": "catalog:backend",
+    "typescript": "catalog:"
+  },
+  "dependencies": {
+    "@arcle/auth-server": "workspace:*",
+    "@arcle/cache": "workspace:*",
+    "@arcle/database": "workspace:*",
+    "@arcle/events": "workspace:*",
+    "@arcle/logger": "workspace:*",
+    "@arcle/queue": "workspace:*",
+    "@arcle/search": "workspace:*",
+    "@arcle/signing": "workspace:*",
+    "@hono/zod-validator": "catalog:backend",
+    "@paralleldrive/cuid2": "catalog:backend",
+    "date-fns": "^4.1.0",
+    "drizzle-orm": "catalog:backend",
+    "hono": "catalog:backend",
+    "ioredis": "catalog:backend",
+    "remove-accents": "^0.5.0",
+    "slugify": "^1.6.6",
+    "zod": "catalog:backend"
+  }
+}

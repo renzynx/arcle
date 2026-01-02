@@ -1,0 +1,28 @@
+{
+  "name": "worker",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "bun run --watch src/index.ts",
+    "start": "bun run src/index.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@arcle/cache": "workspace:*",
+    "@arcle/database": "workspace:*",
+    "@arcle/events": "workspace:*",
+    "@arcle/logger": "workspace:*",
+    "@arcle/queue": "workspace:*",
+    "bullmq": "^5.52.1",
+    "drizzle-orm": "catalog:backend",
+    "ioredis": "catalog:backend",
+    "ms": "catalog:backend",
+    "sharp": "^0.34.3"
+  },
+  "devDependencies": {
+    "@arcle/typescript-config": "workspace:*",
+    "@types/bun": "catalog:",
+    "@types/ms": "catalog:backend",
+    "typescript": "catalog:"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "name": "gateway",
+  "module": "./src/index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "bun run --watch src/index.ts",
+    "build": "bun build src/index.ts --outdir=dist --target=bun --minify",
+    "start": "bun src/index.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@arcle/typescript-config": "workspace:*",
+    "@types/bun": "catalog:",
+    "typescript": "catalog:"
+  },
+  "dependencies": {
+    "@arcle/auth-server": "workspace:*",
+    "@arcle/cache": "workspace:*",
+    "@arcle/database": "workspace:*",
+    "@arcle/events": "workspace:*",
+    "@arcle/logger": "workspace:*",
+    "hono": "catalog:backend"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "name": "admin",
+  "version": "0.0.1",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack --port 9000",
+    "build": "next build",
+    "start": "next start --port 9000",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@arcle/api-client": "workspace:*",
+    "@arcle/auth-client": "workspace:*",
+    "@arcle/query": "workspace:*",
+    "@arcle/ui": "workspace:*",
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@dnd-kit/utilities": "^3.2.2",
+    "@phosphor-icons/react": "catalog:",
+    "@tanstack/react-form": "^1.27.7",
+    "@tanstack/react-query": "^5.80.8",
+    "@tanstack/react-table": "^8.21.3",
+    "date-fns": "^4.1.0",
+    "next": "^16.1.1",
+    "next-themes": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "sonner": "^2.0.0",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@arcle/typescript-config": "workspace:*",
+    "@tailwindcss/postcss": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "typescript": "catalog:"
+  }
+}

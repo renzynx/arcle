@@ -1,0 +1,42 @@
+FROM oven/bun:1.3.5-alpine AS builder
+WORKDIR /app
+
+# Copy entire monorepo for build
+COPY . .
+
+# Install all dependencies
+RUN bun install --frozen-lockfile
+
+ARG APP_NAME=web
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# Build the specific app
+WORKDIR /app/apps/${APP_NAME}
+RUN bun run build
+
+FROM oven/bun:1.3.5-alpine AS runner
+WORKDIR /app
+
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+
+RUN addgroup --system --gid 1001 arcle && \
+    adduser --system --uid 1001 arcle
+
+ARG APP_NAME=web
+ENV APP_NAME=${APP_NAME}
+
+# Standalone output for monorepo mirrors the structure
+COPY --from=builder --chown=arcle:arcle /app/apps/${APP_NAME}/.next/standalone ./
+COPY --from=builder --chown=arcle:arcle /app/apps/${APP_NAME}/.next/static ./apps/${APP_NAME}/.next/static
+
+# Copy public folder if it exists
+COPY --from=builder /app/apps/${APP_NAME}/public* ./apps/${APP_NAME}/
+
+USER arcle
+
+EXPOSE 3000
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+
+CMD ["sh", "-c", "bun run apps/$APP_NAME/server.js"]

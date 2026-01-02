@@ -36,3 +36,7 @@ npm-debug.log*
 *.pem
 
 .turbo
+
+# Uploads
+uploads/
+**/uploads/

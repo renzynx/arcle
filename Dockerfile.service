@@ -1,0 +1,44 @@
+FROM oven/bun:1.3.5-alpine AS builder
+WORKDIR /app
+
+COPY . .
+RUN bun install --frozen-lockfile
+
+ARG SERVICE_NAME
+ARG SEARCH_PROVIDER=postgres
+
+RUN sed -i "s/\"FEATURES.SEARCH_PROVIDER\" = \"'postgres'\"/\"FEATURES.SEARCH_PROVIDER\" = \"'${SEARCH_PROVIDER}'\"/" bunfig.toml
+
+RUN bun build services/${SERVICE_NAME}/src/index.ts \
+    --outdir=dist \
+    --target=bun \
+    --minify
+
+RUN if [ -f "services/${SERVICE_NAME}/src/cli.ts" ]; then \
+    bun build services/${SERVICE_NAME}/src/cli.ts \
+        --outfile=dist/cli.js \
+        --target=bun \
+        --minify; \
+    fi
+
+RUN if [ -d "services/${SERVICE_NAME}/drizzle" ]; then \
+    mkdir -p /app/drizzle-temp && \
+    cp -r services/${SERVICE_NAME}/drizzle/* /app/drizzle-temp/; \
+    else \
+    mkdir -p /app/drizzle-temp; \
+    fi
+
+FROM oven/bun:1.3.5-alpine AS runner
+WORKDIR /app
+
+RUN addgroup --system --gid 1001 arcle && \
+    adduser --system --uid 1001 arcle && \
+    mkdir -p /app/uploads/avatars /app/uploads/covers /app/uploads/pages && \
+    chown -R arcle:arcle /app/uploads
+
+COPY --from=builder --chown=arcle:arcle /app/dist ./dist
+COPY --from=builder --chown=arcle:arcle /app/drizzle-temp/ ./drizzle/
+
+USER arcle
+
+CMD ["bun", "run", "dist/index.js"]

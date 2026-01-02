@@ -1,0 +1,8 @@
+{
+  "extends": "@arcle/typescript-config/bun.json",
+  "compilerOptions": {
+    "types": ["bun"]
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules"]
+}

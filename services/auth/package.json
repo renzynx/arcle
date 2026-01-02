@@ -1,0 +1,34 @@
+{
+  "name": "auth",
+  "module": "./src/index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "bun run --watch src/index.ts",
+    "build": "bun build src/index.ts --outdir=dist --target=bun --minify",
+    "start": "bun src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "db:push": "bunx --bun drizzle-kit push",
+    "db:gen": "bunx --bun drizzle-kit generate",
+    "db:migrate": "bunx --bun drizzle-kit migrate",
+    "cli": "bun src/cli.ts"
+  },
+  "devDependencies": {
+    "@arcle/typescript-config": "workspace:*",
+    "@types/bun": "catalog:",
+    "drizzle-kit": "catalog:backend",
+    "typescript": "catalog:"
+  },
+  "dependencies": {
+    "@arcle/auth-client": "workspace:*",
+    "@arcle/cache": "workspace:*",
+    "@arcle/database": "workspace:*",
+    "@arcle/events": "workspace:*",
+    "@arcle/logger": "workspace:*",
+    "@better-auth/passkey": "^1.4.10",
+    "better-auth": "^1.4.9",
+    "drizzle-orm": "catalog:backend",
+    "hono": "catalog:backend",
+    "ioredis": "catalog:backend"
+  }
+}

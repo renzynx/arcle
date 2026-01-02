@@ -1,0 +1,27 @@
+{
+  "name": "@arcle/database",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@paralleldrive/cuid2": "catalog:backend",
+    "drizzle-orm": "catalog:backend"
+  },
+  "devDependencies": {
+    "@arcle/typescript-config": "workspace:*",
+    "@types/bun": "catalog:",
+    "typescript": "catalog:"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./schema": "./src/schema/index.ts",
+    "./schema/auth": "./src/schema/auth/index.ts",
+    "./schema/catalog": "./src/schema/catalog/index.ts",
+    "./schema/settings": "./src/schema/settings/index.ts"
+  }
+}

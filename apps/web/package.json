@@ -4,25 +4,35 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack --port 7000",
+    "dev": "next dev --turbopack --port 8000",
     "build": "next build",
-    "start": "next start --port 7000",
+    "start": "next start --port 8000",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@arcle/api-client": "workspace:*",
+    "@arcle/auth-client": "workspace:*",
+    "@arcle/query": "workspace:*",
     "@arcle/ui": "workspace:*",
-    "@phosphor-icons/react": "^2.1.10",
+    "@phosphor-icons/react": "catalog:",
+    "@tanstack/react-form": "^1.27.7",
+    "@tanstack/react-query": "^5.80.8",
+    "date-fns": "^4.1.0",
+    "embla-carousel-autoplay": "^8.6.0",
     "next": "^16.1.1",
-    "next-themes": "^0.4.6",
-    "react": "^19.2.3",
-    "react-dom": "^19.2.3"
+    "next-themes": "catalog:",
+    "qrcode.react": "^4.2.0",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "sonner": "^2.0.0",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@arcle/typescript-config": "workspace:*",
-    "@tailwindcss/postcss": "^4.1.18",
-    "@types/node": "^25.0.3",
-    "@types/react": "^19.2.7",
-    "@types/react-dom": "^19.2.3",
-    "typescript": "^5.9.3"
+    "@tailwindcss/postcss": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "typescript": "catalog:"
   }
 }

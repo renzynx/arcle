@@ -1,0 +1,31 @@
+{
+  "name": "media",
+  "module": "./src/index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "bun run --watch src/index.ts",
+    "build": "bun build src/index.ts --outdir=dist --target=bun --minify",
+    "start": "bun src/index.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@arcle/typescript-config": "workspace:*",
+    "@types/bun": "catalog:",
+    "typescript": "catalog:"
+  },
+  "dependencies": {
+    "@arcle/auth-server": "workspace:*",
+    "@arcle/cache": "workspace:*",
+    "@arcle/database": "workspace:*",
+    "@arcle/events": "workspace:*",
+    "@arcle/logger": "workspace:*",
+    "@arcle/queue": "workspace:*",
+    "@arcle/signing": "workspace:*",
+    "@hono/zod-validator": "catalog:backend",
+    "@paralleldrive/cuid2": "catalog:backend",
+    "hono": "catalog:backend",
+    "ioredis": "catalog:backend",
+    "zod": "catalog:backend"
+  }
+}
