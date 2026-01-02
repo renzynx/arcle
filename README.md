@@ -158,7 +158,6 @@ arcle/
 
 4. **Prepare databases**:
    ```bash
-   turbo db:gen
    turbo db:push
    ```
 
