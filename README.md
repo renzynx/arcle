@@ -93,7 +93,7 @@ graph TD
 
 - **Runtime**: [Bun](https://bun.sh)
 - **Monorepo Management**: [Turborepo](https://turbo.build/)
-- **Frontend**: [Next.js 15](https://nextjs.org/), [React 19](https://react.dev/), [Tailwind CSS](https://tailwindcss.com/)
+- **Frontend**: [Next.js 16](https://nextjs.org/), [React 19](https://react.dev/), [Tailwind CSS](https://tailwindcss.com/)
 - **Backend Services**: [Hono](https://hono.dev/)
 - **Database**: [PostgreSQL 16](https://www.postgresql.org/) with [Drizzle ORM](https://orm.drizzle.team/)
 - **Cache & Message Broker**: [Redis 7](https://redis.io/)
