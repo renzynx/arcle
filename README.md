@@ -142,7 +142,7 @@ arcle/
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/your-username/arcle.git
+   git clone https://github.com/renzynx/arcle.git
    cd arcle
    ```
 
