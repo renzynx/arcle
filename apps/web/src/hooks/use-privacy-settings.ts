@@ -1,11 +1,11 @@
 "use client";
 
 import type { UpdateUserSettingsInput, UserSettings } from "@arcle/api-client";
-import { useSessionQuery } from "@arcle/auth-client";
+import { useApiClient, useSessionQuery } from "@arcle/auth-client";
 import { useMutation, useQuery, useQueryClient } from "@arcle/query";
-import { apiClient } from "@/lib/api";
 
 export function usePrivacySettings() {
+  const apiClient = useApiClient();
   const { data: session } = useSessionQuery();
 
   return useQuery({
@@ -19,6 +19,7 @@ export function usePrivacySettings() {
 
 export function useUpdatePrivacySettingsMutation() {
   const queryClient = useQueryClient();
+  const apiClient = useApiClient();
 
   return useMutation({
     mutationFn: (data: UpdateUserSettingsInput) =>

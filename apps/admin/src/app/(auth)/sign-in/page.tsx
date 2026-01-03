@@ -1,6 +1,6 @@
 "use client";
 
-import { authClient, useSessionQuery } from "@arcle/auth-client";
+import { useAuthClient, useSessionQuery } from "@arcle/auth-client";
 import { Button } from "@arcle/ui/components/button";
 import {
   Card,
@@ -33,6 +33,7 @@ const signInSchema = z.object({
 export default function AdminSignInPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const authClient = useAuthClient();
   const { data: session, isPending: isSessionPending } = useSessionQuery();
 
   useEffect(() => {
@@ -57,6 +58,11 @@ export default function AdminSignInPage() {
 
       if (error) {
         toast.error(error.message || "Failed to sign in");
+        return;
+      }
+
+      if ((data as { twoFactorRedirect?: boolean })?.twoFactorRedirect) {
+        router.push("/two-factor");
         return;
       }
 

@@ -1,20 +1,20 @@
 import { getAccessToken } from "@arcle/auth-client";
 import { toast } from "sonner";
 
-const GATEWAY_URL =
-  process.env.NEXT_PUBLIC_GATEWAY_URL || "http://localhost:3000";
-
 interface UploadResult {
   filename: string;
   url: string;
 }
 
-export async function uploadCoverImage(file: File): Promise<UploadResult> {
+export async function uploadCoverImage(
+  file: File,
+  gatewayUrl: string,
+): Promise<UploadResult> {
   const formData = new FormData();
   formData.append("file", file);
 
   const token = await getAccessToken();
-  const res = await fetch(`${GATEWAY_URL}/api/media/images/covers`, {
+  const res = await fetch(`${gatewayUrl}/api/media/images/covers`, {
     method: "POST",
     body: formData,
     credentials: "include",
@@ -28,9 +28,12 @@ export async function uploadCoverImage(file: File): Promise<UploadResult> {
   return res.json();
 }
 
-export async function deleteCoverImage(filename: string): Promise<void> {
+export async function deleteCoverImage(
+  filename: string,
+  gatewayUrl: string,
+): Promise<void> {
   const token = await getAccessToken();
-  await fetch(`${GATEWAY_URL}/api/media/images/covers/${filename}`, {
+  await fetch(`${gatewayUrl}/api/media/images/covers/${filename}`, {
     method: "DELETE",
     credentials: "include",
     headers: token ? { Authorization: `Bearer ${token}` } : {},
@@ -39,6 +42,7 @@ export async function deleteCoverImage(filename: string): Promise<void> {
 
 interface ProcessCoverImageOptions {
   coverImage: string | File | null;
+  gatewayUrl: string;
   onUploadError?: () => void;
 }
 
@@ -49,6 +53,7 @@ interface ProcessCoverImageResult {
 
 export async function processCoverImage({
   coverImage,
+  gatewayUrl,
   onUploadError,
 }: ProcessCoverImageOptions): Promise<ProcessCoverImageResult | null> {
   let uploadedFilename: string | null = null;
@@ -60,7 +65,7 @@ export async function processCoverImage({
 
   if (coverImage instanceof File) {
     try {
-      const result = await uploadCoverImage(coverImage);
+      const result = await uploadCoverImage(coverImage, gatewayUrl);
       coverImageUrl = result.filename;
       uploadedFilename = result.filename;
     } catch (error) {
@@ -74,9 +79,12 @@ export async function processCoverImage({
   return { coverImageUrl, uploadedFilename };
 }
 
-export async function cleanupOrphanedCover(filename: string): Promise<void> {
+export async function cleanupOrphanedCover(
+  filename: string,
+  gatewayUrl: string,
+): Promise<void> {
   try {
-    await deleteCoverImage(filename);
+    await deleteCoverImage(filename, gatewayUrl);
   } catch (error) {
     console.error("Failed to cleanup orphaned cover:", error);
   }

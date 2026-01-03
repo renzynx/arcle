@@ -86,6 +86,7 @@ services:
       CATALOG_URL: http://catalog:6000
       MEDIA_URL: http://media:7000
       ALLOWED_ORIGINS: http://localhost:8000,http://localhost:9000
+      ADMIN_ORIGIN: ${ADMIN_ORIGIN:-http://localhost:9000}
     depends_on:
       redis:
         condition: service_healthy

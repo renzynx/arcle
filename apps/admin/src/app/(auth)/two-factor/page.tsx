@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  useAuthClient,
   useVerifyBackupCodeMutation,
   useVerifyTotpMutation,
 } from "@arcle/auth-client";
@@ -28,7 +29,9 @@ import {
 } from "@arcle/ui/components/input-otp";
 import { Label } from "@arcle/ui/components/label";
 import { Spinner } from "@arcle/ui/components/spinner";
+import { ShieldCheck } from "@phosphor-icons/react";
 import { useForm } from "@tanstack/react-form";
+import { useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -45,11 +48,30 @@ const backupCodeSchema = z.object({
   trustDevice: z.boolean(),
 });
 
-export default function TwoFactorPage() {
+export default function AdminTwoFactorPage() {
   const router = useRouter();
+  const queryClient = useQueryClient();
+  const authClient = useAuthClient();
   const [useBackupCode, setUseBackupCode] = useState(false);
   const verifyTotpMutation = useVerifyTotpMutation();
   const verifyBackupMutation = useVerifyBackupCodeMutation();
+
+  const verifyAdminAndRedirect = async () => {
+    const { data } = await authClient.getSession();
+
+    if (!data?.user || (data.user as { role?: string }).role !== "admin") {
+      await authClient.signOut();
+      toast.error("Access denied. Admin privileges required.");
+      router.replace("/sign-in");
+      return;
+    }
+
+    await queryClient.invalidateQueries({
+      queryKey: ["auth", "session"],
+    });
+    toast.success("Signed in successfully");
+    router.replace("/");
+  };
 
   const totpForm = useForm({
     defaultValues: {
@@ -61,10 +83,7 @@ export default function TwoFactorPage() {
     },
     onSubmit: async ({ value }) => {
       verifyTotpMutation.mutate(value, {
-        onSuccess: () => {
-          toast.success("Signed in successfully");
-          router.push("/");
-        },
+        onSuccess: verifyAdminAndRedirect,
         onError: (error) => {
           toast.error(error.message || "Invalid code");
           totpForm.setFieldValue("code", "");
@@ -83,10 +102,7 @@ export default function TwoFactorPage() {
     },
     onSubmit: async ({ value }) => {
       verifyBackupMutation.mutate(value, {
-        onSuccess: () => {
-          toast.success("Signed in successfully");
-          router.push("/");
-        },
+        onSuccess: verifyAdminAndRedirect,
         onError: (error) => {
           toast.error(error.message || "Invalid backup code");
           backupForm.setFieldValue("code", "");
@@ -103,7 +119,10 @@ export default function TwoFactorPage() {
   if (useBackupCode) {
     return (
       <Card className="w-full max-w-md">
-        <CardHeader>
+        <CardHeader className="text-center">
+          <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-full bg-primary/10">
+            <ShieldCheck className="size-6 text-primary" />
+          </div>
           <CardTitle>Use Backup Code</CardTitle>
           <CardDescription>
             Enter one of your backup codes to sign in.
@@ -146,7 +165,7 @@ export default function TwoFactorPage() {
                 name="trustDevice"
                 children={(field) => (
                   <Field>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center justify-center gap-2">
                       <Checkbox
                         id={field.name}
                         checked={field.state.value}
@@ -196,7 +215,10 @@ export default function TwoFactorPage() {
 
   return (
     <Card className="w-full max-w-md">
-      <CardHeader>
+      <CardHeader className="text-center">
+        <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-full bg-primary/10">
+          <ShieldCheck className="size-6 text-primary" />
+        </div>
         <CardTitle>Two-Factor Authentication</CardTitle>
         <CardDescription>
           Enter the 6-digit code from your authenticator app to continue.
@@ -252,7 +274,7 @@ export default function TwoFactorPage() {
               name="trustDevice"
               children={(field) => (
                 <Field>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-center gap-2">
                     <Checkbox
                       id={field.name}
                       checked={field.state.value}

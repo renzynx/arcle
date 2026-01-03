@@ -3,6 +3,8 @@ import "server-only";
 import { createApiClient } from "@arcle/api-client";
 import { cookies } from "next/headers";
 
+const gatewayUrl = process.env.GATEWAY_URL || "http://localhost:3000";
+
 async function getServerToken(): Promise<string | undefined> {
   const cookieStore = await cookies();
   const cookieHeader = cookieStore
@@ -12,13 +14,8 @@ async function getServerToken(): Promise<string | undefined> {
 
   if (!cookieHeader) return undefined;
 
-  const baseURL =
-    process.env.GATEWAY_URL ||
-    process.env.NEXT_PUBLIC_GATEWAY_URL ||
-    "http://localhost:3000";
-
   try {
-    const response = await fetch(`${baseURL}/api/auth/token`, {
+    const response = await fetch(`${gatewayUrl}/api/auth/token`, {
       headers: { Cookie: cookieHeader },
       cache: "no-store",
     });
@@ -35,13 +32,8 @@ async function getServerToken(): Promise<string | undefined> {
 export async function createAuthenticatedServerClient() {
   const token = await getServerToken();
 
-  const baseURL =
-    process.env.GATEWAY_URL ||
-    process.env.NEXT_PUBLIC_GATEWAY_URL ||
-    "http://localhost:3000";
-
   return createApiClient({
-    baseURL,
+    baseURL: gatewayUrl,
     getToken: async () => token,
   });
 }

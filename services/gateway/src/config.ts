@@ -5,6 +5,7 @@ export const config = {
     "http://localhost:8000",
     "http://localhost:9000",
   ],
+  adminOrigin: Bun.env.ADMIN_ORIGIN || "http://localhost:9000",
   services: {
     auth: Bun.env.AUTH_URL || "http://localhost:4000",
     users: Bun.env.USERS_URL || "http://localhost:5000",

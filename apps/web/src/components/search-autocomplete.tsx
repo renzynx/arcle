@@ -1,6 +1,7 @@
 "use client";
 
 import type { Series } from "@arcle/api-client";
+import { useApiClient } from "@arcle/auth-client";
 import {
   Autocomplete,
   AutocompleteEmpty,
@@ -14,7 +15,6 @@ import {
 import { MagnifyingGlass, Spinner } from "@phosphor-icons/react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { apiClient } from "@/lib/api";
 
 interface SearchAutocompleteProps {
   className?: string;
@@ -27,6 +27,7 @@ export function SearchAutocomplete({
   placeholder = "Search series...",
   onSelect,
 }: SearchAutocompleteProps) {
+  const apiClient = useApiClient();
   const router = useRouter();
   const [inputValue, setInputValue] = useState("");
   const [results, setResults] = useState<Series[]>([]);
@@ -63,7 +64,7 @@ export function SearchAutocomplete({
     return () => {
       clearTimeout(timeoutId);
     };
-  }, [inputValue]);
+  }, [inputValue, apiClient]);
 
   const handleSelect = useCallback(
     (series: Series) => {

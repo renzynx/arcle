@@ -1,14 +1,15 @@
 "use client";
 
 import type { Series } from "@arcle/api-client";
+import { useApiClient } from "@arcle/auth-client";
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useEffect, useState, useTransition } from "react";
-import { apiClient } from "@/lib/api";
 import { BrowseFilters } from "./browse-filters";
 import { BrowseResults } from "./browse-results";
 import { ITEMS_PER_PAGE, useBrowseFilters } from "./use-browse-filters";
 
 export function BrowseContent() {
+  const apiClient = useApiClient();
   const filters = useBrowseFilters();
   const [isPending, startTransition] = useTransition();
   const [isInitialLoad, setIsInitialLoad] = useState(true);
@@ -55,6 +56,7 @@ export function BrowseContent() {
       }
     });
   }, [
+    apiClient,
     filters.debouncedQuery,
     filters.sort,
     filters.status,

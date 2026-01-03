@@ -1,5 +1,6 @@
 "use client";
 
+import { useApiClient } from "@arcle/auth-client";
 import { Button } from "@arcle/ui/components/button";
 import {
   Popover,
@@ -12,7 +13,6 @@ import { useQuery } from "@tanstack/react-query";
 import type { Route } from "next";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { apiClient } from "@/lib/api";
 import { SearchAutocomplete } from "./search-autocomplete";
 import { useSiteConfig } from "./site-config-provider";
 import { UserButton } from "./user-button";
@@ -125,6 +125,7 @@ function MobileSearchOverlay({
 }
 
 export function Navbar() {
+  const apiClient = useApiClient();
   const { siteName } = useSiteConfig();
   const [searchOpen, setSearchOpen] = useState(false);
 

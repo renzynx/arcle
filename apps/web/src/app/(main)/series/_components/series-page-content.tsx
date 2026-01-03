@@ -1,7 +1,7 @@
 "use client";
 
 import type { SeriesWithChapters } from "@arcle/api-client";
-import { useSessionQuery } from "@arcle/auth-client";
+import { useApiClient, useSessionQuery } from "@arcle/auth-client";
 import { useQuery } from "@arcle/query";
 import { Badge } from "@arcle/ui/components/badge";
 import { Button } from "@arcle/ui/components/button";
@@ -30,7 +30,6 @@ import {
 } from "@/hooks/use-library";
 import { usePrivacySettings } from "@/hooks/use-privacy-settings";
 import { useTrackSeriesView } from "@/hooks/use-track-view";
-import { apiClient } from "@/lib/api";
 import { ChapterList } from "./chapter-list";
 
 interface SeriesPageContentProps {
@@ -38,6 +37,7 @@ interface SeriesPageContentProps {
 }
 
 export function SeriesPageContent({ slug }: SeriesPageContentProps) {
+  const apiClient = useApiClient();
   const { data: session } = useSessionQuery();
   const { data: privacySettings } = usePrivacySettings();
 

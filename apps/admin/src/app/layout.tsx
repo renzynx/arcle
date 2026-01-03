@@ -5,6 +5,8 @@ import { Providers } from "@/components/providers";
 
 const nunitoSans = Nunito_Sans({ variable: "--font-sans" });
 
+const gatewayUrl = process.env.GATEWAY_URL || "http://localhost:3000";
+
 export const metadata: Metadata = {
   title: "Admin",
   robots: {
@@ -40,7 +42,7 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased">
-        <Providers>{children}</Providers>
+        <Providers gatewayUrl={gatewayUrl}>{children}</Providers>
       </body>
     </html>
   );

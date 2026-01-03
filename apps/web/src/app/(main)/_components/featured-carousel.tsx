@@ -1,6 +1,7 @@
 "use client";
 
 import type { Series, SeriesListResponse } from "@arcle/api-client";
+import { useApiClient } from "@arcle/auth-client";
 import { useQuery } from "@arcle/query";
 import { Badge } from "@arcle/ui/components/badge";
 import {
@@ -16,9 +17,9 @@ import Autoplay from "embla-carousel-autoplay";
 import type { Route } from "next";
 import Link from "next/link";
 import { useRef } from "react";
-import { apiClient } from "@/lib/api";
 
 export function FeaturedCarousel() {
+  const apiClient = useApiClient();
   const {
     data: seriesData,
     isPending,

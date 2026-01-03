@@ -1,6 +1,5 @@
-import { admin } from "@arcle/auth-client";
+import { useApiClient, useAuthClient } from "@arcle/auth-client";
 import { useQuery } from "@arcle/query";
-import { apiClient } from "./api";
 import {
   type AdminUser,
   adminKeys,
@@ -12,6 +11,8 @@ import {
 export type { AdminUser } from "./keys";
 
 export function useSeriesListQuery(params?: SeriesListParams) {
+  const apiClient = useApiClient();
+
   return useQuery({
     queryKey: adminKeys.seriesList(params),
     queryFn: () => apiClient.admin.getSeries(params),
@@ -20,6 +21,8 @@ export function useSeriesListQuery(params?: SeriesListParams) {
 }
 
 export function useSeriesQuery(id: string) {
+  const apiClient = useApiClient();
+
   return useQuery({
     queryKey: [...adminKeys.series(), id],
     queryFn: () => apiClient.catalog.getSeriesById(id),
@@ -32,6 +35,8 @@ export function useChaptersQuery(
   seriesId: string,
   params?: ChaptersListParams,
 ) {
+  const apiClient = useApiClient();
+
   return useQuery({
     queryKey: [...adminKeys.series(), seriesId, "chapters", params],
     queryFn: () => apiClient.admin.getSeriesChapters(seriesId, params),
@@ -40,6 +45,8 @@ export function useChaptersQuery(
 }
 
 export function useChapterQuery(id: string) {
+  const apiClient = useApiClient();
+
   return useQuery({
     queryKey: ["chapters", id],
     queryFn: () => apiClient.catalog.getChapterById(id),
@@ -48,6 +55,8 @@ export function useChapterQuery(id: string) {
 }
 
 export function usePagesQuery(chapterId: string) {
+  const apiClient = useApiClient();
+
   return useQuery({
     queryKey: ["chapters", chapterId, "pages"],
     queryFn: () => apiClient.catalog.getChapterPages(chapterId),
@@ -56,10 +65,12 @@ export function usePagesQuery(chapterId: string) {
 }
 
 export function useUsersQuery(params?: UsersListParams) {
+  const authClient = useAuthClient();
+
   return useQuery({
     queryKey: adminKeys.usersList(params),
     queryFn: async () => {
-      const { data, error } = await admin.listUsers({
+      const { data, error } = await authClient.admin.listUsers({
         query: {
           limit: params?.limit ?? 20,
           offset: params?.offset ?? 0,
@@ -78,12 +89,15 @@ export function useUsersQuery(params?: UsersListParams) {
 }
 
 export function useStatsQuery() {
+  const apiClient = useApiClient();
+  const authClient = useAuthClient();
+
   return useQuery({
     queryKey: adminKeys.stats(),
     queryFn: async () => {
       const [seriesData, usersResponse, statsData] = await Promise.all([
         apiClient.catalog.getSeries({ limit: 1 }),
-        admin.listUsers({ query: { limit: 1 } }),
+        authClient.admin.listUsers({ query: { limit: 1 } }),
         apiClient.stats.get(),
       ]);
 
@@ -100,6 +114,8 @@ export function useStatsQuery() {
 }
 
 export function useSettingsQuery() {
+  const apiClient = useApiClient();
+
   return useQuery({
     queryKey: adminKeys.settings(),
     queryFn: () => apiClient.settings.getAll(),
@@ -108,6 +124,8 @@ export function useSettingsQuery() {
 }
 
 export function useSystemHealthQuery() {
+  const apiClient = useApiClient();
+
   return useQuery({
     queryKey: adminKeys.systemHealth(),
     queryFn: () => apiClient.stats.health(),
@@ -117,6 +135,8 @@ export function useSystemHealthQuery() {
 }
 
 export function useMediaStatsQuery() {
+  const apiClient = useApiClient();
+
   return useQuery({
     queryKey: adminKeys.mediaStats(),
     queryFn: () => apiClient.media.getStats(),
@@ -128,6 +148,8 @@ export function useMediaCoversQuery(params?: {
   limit?: number;
   offset?: number;
 }) {
+  const apiClient = useApiClient();
+
   return useQuery({
     queryKey: adminKeys.mediaCovers(params),
     queryFn: () => apiClient.media.getCovers(params),
@@ -139,6 +161,8 @@ export function useMediaPagesQuery(params?: {
   limit?: number;
   offset?: number;
 }) {
+  const apiClient = useApiClient();
+
   return useQuery({
     queryKey: adminKeys.mediaPages(params),
     queryFn: () => apiClient.media.getPages(params),
@@ -147,6 +171,8 @@ export function useMediaPagesQuery(params?: {
 }
 
 export function useAllChaptersQuery(params?: ChaptersListParams) {
+  const apiClient = useApiClient();
+
   return useQuery({
     queryKey: adminKeys.chaptersList(params),
     queryFn: () => apiClient.catalog.getChapters(params),
@@ -155,6 +181,8 @@ export function useAllChaptersQuery(params?: ChaptersListParams) {
 }
 
 export function useGenresQuery() {
+  const apiClient = useApiClient();
+
   return useQuery({
     queryKey: adminKeys.genres(),
     queryFn: () => apiClient.catalog.getGenres(),
@@ -163,6 +191,8 @@ export function useGenresQuery() {
 }
 
 export function useGenreQuery(id: string) {
+  const apiClient = useApiClient();
+
   return useQuery({
     queryKey: [...adminKeys.genres(), id],
     queryFn: () => apiClient.catalog.getGenreById(id),

@@ -1,6 +1,7 @@
 import { getSettingBool } from "@arcle/cache";
 import { SettingKey } from "@arcle/database/schema/settings";
 import type { Context, Next } from "hono";
+import { config } from "../config.ts";
 
 const AUTH_URL = Bun.env.AUTH_URL || "http://localhost:4000";
 
@@ -14,11 +15,22 @@ export async function maintenanceMode(c: Context, next: Next) {
     return next();
   }
 
+  // Allow all requests from admin origin
+  const origin = c.req.header("Origin") || c.req.header("Referer");
+  if (origin?.startsWith(config.adminOrigin)) {
+    return next();
+  }
+
   if (c.req.path.startsWith("/api/auth")) {
     return next();
   }
 
-  if (c.req.path === "/health") {
+  if (c.req.path === "/health" || c.req.path === "/status") {
+    return next();
+  }
+
+  // Allow settings endpoint for maintenance page to fetch config
+  if (c.req.path === "/api/catalog/settings") {
     return next();
   }
 

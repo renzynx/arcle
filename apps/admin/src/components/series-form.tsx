@@ -1,6 +1,7 @@
 "use client";
 
 import type { SeriesWithChapters } from "@arcle/api-client";
+import { useGatewayUrl } from "@arcle/auth-client";
 import { Button } from "@arcle/ui/components/button";
 import {
   Card,
@@ -65,6 +66,7 @@ type SeriesFormProps = {
 
 export function SeriesForm({ series }: SeriesFormProps) {
   const router = useRouter();
+  const gatewayUrl = useGatewayUrl();
   const createMutation = useCreateSeriesMutation();
   const updateMutation = useUpdateSeriesMutation();
   const { data: genres } = useGenresQuery();
@@ -88,6 +90,7 @@ export function SeriesForm({ series }: SeriesFormProps) {
     onSubmit: async ({ value }) => {
       const coverResult = await processCoverImage({
         coverImage: value.coverImage,
+        gatewayUrl,
       });
 
       if (coverResult === null) {
@@ -118,7 +121,7 @@ export function SeriesForm({ series }: SeriesFormProps) {
         router.push("/series");
       } catch (error) {
         if (uploadedFilename) {
-          await cleanupOrphanedCover(uploadedFilename);
+          await cleanupOrphanedCover(uploadedFilename, gatewayUrl);
         }
         toast.error("Failed to save series");
         console.error(error);

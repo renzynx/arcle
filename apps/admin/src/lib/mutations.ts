@@ -9,14 +9,19 @@ import type {
   UpdatePageInput,
   UpdateSeriesInput,
 } from "@arcle/api-client";
-import { admin, getAccessToken } from "@arcle/auth-client";
+import {
+  getAccessToken,
+  useApiClient,
+  useAuthClient,
+  useGatewayUrl,
+} from "@arcle/auth-client";
 import { useMutation, useQueryClient } from "@arcle/query";
 
-import { apiClient } from "./api";
 import { adminKeys, type UserRole } from "./keys";
 
 export function useCreateSeriesMutation() {
   const queryClient = useQueryClient();
+  const apiClient = useApiClient();
 
   return useMutation({
     mutationFn: (data: CreateSeriesInput) =>
@@ -30,6 +35,7 @@ export function useCreateSeriesMutation() {
 
 export function useUpdateSeriesMutation() {
   const queryClient = useQueryClient();
+  const apiClient = useApiClient();
 
   return useMutation({
     mutationFn: ({ id, ...data }: UpdateSeriesInput & { id: string }) =>
@@ -45,6 +51,7 @@ export function useUpdateSeriesMutation() {
 
 export function useDeleteSeriesMutation() {
   const queryClient = useQueryClient();
+  const apiClient = useApiClient();
 
   return useMutation({
     mutationFn: (id: string) => apiClient.catalog.deleteSeries(id),
@@ -57,6 +64,7 @@ export function useDeleteSeriesMutation() {
 
 export function useCreateChapterMutation() {
   const queryClient = useQueryClient();
+  const apiClient = useApiClient();
 
   return useMutation({
     mutationFn: (data: CreateChapterInput) =>
@@ -74,6 +82,7 @@ export function useCreateChapterMutation() {
 
 export function useUpdateChapterMutation() {
   const queryClient = useQueryClient();
+  const apiClient = useApiClient();
 
   return useMutation({
     mutationFn: ({
@@ -92,6 +101,7 @@ export function useUpdateChapterMutation() {
 
 export function useDeleteChapterMutation() {
   const queryClient = useQueryClient();
+  const apiClient = useApiClient();
 
   return useMutation({
     mutationFn: ({ id }: { id: string; seriesId: string }) =>
@@ -112,6 +122,7 @@ export function useDeleteChapterMutation() {
 
 export function useCreatePageMutation() {
   const queryClient = useQueryClient();
+  const apiClient = useApiClient();
 
   return useMutation({
     mutationFn: (data: CreatePageInput) => apiClient.catalog.createPage(data),
@@ -125,6 +136,7 @@ export function useCreatePageMutation() {
 
 export function useCreatePagesMutation() {
   const queryClient = useQueryClient();
+  const apiClient = useApiClient();
 
   return useMutation({
     mutationFn: (data: CreatePagesInput) => apiClient.catalog.createPages(data),
@@ -138,6 +150,7 @@ export function useCreatePagesMutation() {
 
 export function useUpdatePageMutation() {
   const queryClient = useQueryClient();
+  const apiClient = useApiClient();
 
   return useMutation({
     mutationFn: ({
@@ -156,6 +169,7 @@ export function useUpdatePageMutation() {
 
 export function useDeletePageMutation() {
   const queryClient = useQueryClient();
+  const apiClient = useApiClient();
 
   return useMutation({
     mutationFn: ({ id }: { id: string; chapterId: string }) =>
@@ -170,6 +184,7 @@ export function useDeletePageMutation() {
 
 export function useDeletePagesByChapterMutation() {
   const queryClient = useQueryClient();
+  const apiClient = useApiClient();
 
   return useMutation({
     mutationFn: (chapterId: string) =>
@@ -184,10 +199,8 @@ export function useDeletePagesByChapterMutation() {
 
 export function useUploadPagesMutation() {
   const queryClient = useQueryClient();
-  const baseUrl =
-    typeof window !== "undefined"
-      ? process.env.NEXT_PUBLIC_GATEWAY_URL || "http://localhost:3000"
-      : "http://localhost:3000";
+  const apiClient = useApiClient();
+  const gatewayUrl = useGatewayUrl();
 
   return useMutation({
     mutationFn: async ({
@@ -206,7 +219,7 @@ export function useUploadPagesMutation() {
         const formData = new FormData();
         formData.append("file", file);
 
-        const res = await fetch(`${baseUrl}/api/media/images/pages`, {
+        const res = await fetch(`${gatewayUrl}/api/media/images/pages`, {
           method: "POST",
           body: formData,
           credentials: "include",
@@ -238,6 +251,7 @@ export function useUploadPagesMutation() {
 
 export function useUpdatePageOrderMutation() {
   const queryClient = useQueryClient();
+  const apiClient = useApiClient();
 
   return useMutation({
     mutationFn: (variables: {
@@ -256,6 +270,7 @@ export function useUpdatePageOrderMutation() {
 
 export function useBanUserMutation() {
   const queryClient = useQueryClient();
+  const authClient = useAuthClient();
 
   return useMutation({
     mutationFn: ({
@@ -267,7 +282,7 @@ export function useBanUserMutation() {
       banReason?: string;
       banExpiresIn?: number;
     }) =>
-      admin.banUser({
+      authClient.admin.banUser({
         userId,
         banReason,
         banExpiresIn,
@@ -280,9 +295,11 @@ export function useBanUserMutation() {
 
 export function useUnbanUserMutation() {
   const queryClient = useQueryClient();
+  const authClient = useAuthClient();
 
   return useMutation({
-    mutationFn: ({ userId }: { userId: string }) => admin.unbanUser({ userId }),
+    mutationFn: ({ userId }: { userId: string }) =>
+      authClient.admin.unbanUser({ userId }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: adminKeys.users() });
     },
@@ -291,10 +308,11 @@ export function useUnbanUserMutation() {
 
 export function useSetUserRoleMutation() {
   const queryClient = useQueryClient();
+  const authClient = useAuthClient();
 
   return useMutation({
     mutationFn: ({ userId, role }: { userId: string; role: UserRole }) =>
-      admin.setRole({ userId, role }),
+      authClient.admin.setRole({ userId, role }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: adminKeys.users() });
     },
@@ -303,6 +321,7 @@ export function useSetUserRoleMutation() {
 
 export function useCreateUserMutation() {
   const queryClient = useQueryClient();
+  const authClient = useAuthClient();
 
   return useMutation({
     mutationFn: ({
@@ -316,7 +335,7 @@ export function useCreateUserMutation() {
       password: string;
       role: UserRole;
     }) =>
-      admin.createUser({
+      authClient.admin.createUser({
         name,
         email,
         password,
@@ -331,6 +350,7 @@ export function useCreateUserMutation() {
 
 export function useUpdateSettingMutation() {
   const queryClient = useQueryClient();
+  const apiClient = useApiClient();
 
   return useMutation({
     mutationFn: ({ key, value }: { key: string; value: string }) =>
@@ -343,6 +363,7 @@ export function useUpdateSettingMutation() {
 
 export function useBulkUpdateSettingsMutation() {
   const queryClient = useQueryClient();
+  const apiClient = useApiClient();
 
   return useMutation({
     mutationFn: (settings: Array<{ key: string; value: string }>) =>
@@ -355,6 +376,7 @@ export function useBulkUpdateSettingsMutation() {
 
 export function useClearTempMutation() {
   const queryClient = useQueryClient();
+  const apiClient = useApiClient();
 
   return useMutation({
     mutationFn: () => apiClient.media.clearTemp(),
@@ -366,6 +388,7 @@ export function useClearTempMutation() {
 
 export function useRegenerateSigningSecretMutation() {
   const queryClient = useQueryClient();
+  const apiClient = useApiClient();
 
   return useMutation({
     mutationFn: () => apiClient.settings.regenerateSigningSecret(),
@@ -377,6 +400,7 @@ export function useRegenerateSigningSecretMutation() {
 
 export function useDeleteCoverMutation() {
   const queryClient = useQueryClient();
+  const apiClient = useApiClient();
 
   return useMutation({
     mutationFn: (filename: string) => apiClient.media.deleteCover(filename),
@@ -389,6 +413,7 @@ export function useDeleteCoverMutation() {
 
 export function useCreateGenreMutation() {
   const queryClient = useQueryClient();
+  const apiClient = useApiClient();
 
   return useMutation({
     mutationFn: (data: CreateGenreInput) => apiClient.catalog.createGenre(data),
@@ -400,6 +425,7 @@ export function useCreateGenreMutation() {
 
 export function useUpdateGenreMutation() {
   const queryClient = useQueryClient();
+  const apiClient = useApiClient();
 
   return useMutation({
     mutationFn: ({ id, ...data }: UpdateGenreInput & { id: string }) =>
@@ -412,6 +438,7 @@ export function useUpdateGenreMutation() {
 
 export function useDeleteGenreMutation() {
   const queryClient = useQueryClient();
+  const apiClient = useApiClient();
 
   return useMutation({
     mutationFn: (id: string) => apiClient.catalog.deleteGenre(id),
@@ -423,10 +450,7 @@ export function useDeleteGenreMutation() {
 
 export function useUploadOgImageMutation() {
   const queryClient = useQueryClient();
-  const baseUrl =
-    typeof window !== "undefined"
-      ? process.env.NEXT_PUBLIC_GATEWAY_URL || "http://localhost:3000"
-      : "http://localhost:3000";
+  const gatewayUrl = useGatewayUrl();
 
   return useMutation({
     mutationFn: async (file: File) => {
@@ -438,7 +462,7 @@ export function useUploadOgImageMutation() {
       const formData = new FormData();
       formData.append("file", file);
 
-      const res = await fetch(`${baseUrl}/api/media/images/og`, {
+      const res = await fetch(`${gatewayUrl}/api/media/images/og`, {
         method: "POST",
         body: formData,
         credentials: "include",

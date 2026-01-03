@@ -1,12 +1,12 @@
 "use client";
 
 import type { SeriesListResponse } from "@arcle/api-client";
+import { useApiClient } from "@arcle/auth-client";
 import { useQuery } from "@arcle/query";
 import { ArrowRight } from "@phosphor-icons/react";
 import type { Route } from "next";
 import Link from "next/link";
 import { SeriesGrid, SeriesGridSkeleton } from "@/components/series-grid";
-import { apiClient } from "@/lib/api";
 
 interface SeriesSectionProps {
   title: string;
@@ -16,6 +16,7 @@ interface SeriesSectionProps {
 }
 
 function SeriesSection({ title, href, sort, limit = 6 }: SeriesSectionProps) {
+  const apiClient = useApiClient();
   const {
     data: seriesData,
     isPending,

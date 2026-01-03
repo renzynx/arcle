@@ -1,11 +1,11 @@
 "use client";
 
+import { useApiClient } from "@arcle/auth-client";
 import { Button } from "@arcle/ui/components/button";
 import { Checkbox } from "@arcle/ui/components/checkbox";
 import { Trash } from "@phosphor-icons/react";
 import { useQuery } from "@tanstack/react-query";
 import { useRemoveHistoryMutation } from "@/hooks/use-library";
-import { apiClient } from "@/lib/api";
 
 interface HistoryItemCardProps {
   item: { id: string; seriesId: string; chapterNumber: string; readAt: Date };
@@ -20,6 +20,7 @@ export function HistoryItemCard({
   isSelected,
   onToggleSelect,
 }: HistoryItemCardProps) {
+  const apiClient = useApiClient();
   const { data: series } = useQuery({
     queryKey: ["series", item.seriesId] as const,
     queryFn: () => apiClient.catalog.getSeriesById(item.seriesId),

@@ -49,7 +49,11 @@ export default function SignInPage() {
     },
     onSubmit: async ({ value }) => {
       signInMutation.mutate(value, {
-        onSuccess: () => {
+        onSuccess: (data) => {
+          if ((data as { twoFactorRedirect?: boolean })?.twoFactorRedirect) {
+            router.push("/two-factor");
+            return;
+          }
           toast.success("Signed in successfully");
           router.push("/");
         },

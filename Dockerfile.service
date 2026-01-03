@@ -33,7 +33,7 @@ WORKDIR /app
 
 RUN addgroup --system --gid 1001 arcle && \
     adduser --system --uid 1001 arcle && \
-    mkdir -p /app/uploads/avatars /app/uploads/covers /app/uploads/pages && \
+    mkdir -p /app/uploads/avatars /app/uploads/covers /app/uploads/pages /app/uploads/og && \
     chown -R arcle:arcle /app/uploads
 
 COPY --from=builder --chown=arcle:arcle /app/dist ./dist

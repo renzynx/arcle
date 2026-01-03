@@ -54,23 +54,25 @@ export function VerifyStep({ onSubmit, isPending, onBack }: VerifyStepProps) {
             return (
               <Field data-invalid={isInvalid}>
                 <FieldLabel htmlFor={field.name}>Verification Code</FieldLabel>
-                <InputOTP
-                  id={field.name}
-                  maxLength={6}
-                  value={field.state.value}
-                  onChange={(value) => field.handleChange(value)}
-                  onComplete={() => form.handleSubmit()}
-                  aria-invalid={isInvalid}
-                >
-                  <InputOTPGroup>
-                    <InputOTPSlot index={0} />
-                    <InputOTPSlot index={1} />
-                    <InputOTPSlot index={2} />
-                    <InputOTPSlot index={3} />
-                    <InputOTPSlot index={4} />
-                    <InputOTPSlot index={5} />
-                  </InputOTPGroup>
-                </InputOTP>
+                <div className="flex justify-center">
+                  <InputOTP
+                    id={field.name}
+                    maxLength={6}
+                    value={field.state.value}
+                    onChange={(value) => field.handleChange(value)}
+                    onComplete={() => form.handleSubmit()}
+                    aria-invalid={isInvalid}
+                  >
+                    <InputOTPGroup>
+                      <InputOTPSlot index={0} />
+                      <InputOTPSlot index={1} />
+                      <InputOTPSlot index={2} />
+                      <InputOTPSlot index={3} />
+                      <InputOTPSlot index={4} />
+                      <InputOTPSlot index={5} />
+                    </InputOTPGroup>
+                  </InputOTP>
+                </div>
                 {isInvalid && <FieldError errors={field.state.meta.errors} />}
               </Field>
             );

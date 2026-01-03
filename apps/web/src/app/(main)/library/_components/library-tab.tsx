@@ -5,6 +5,7 @@ import type {
   LibraryStatus,
   SeriesWithChapters,
 } from "@arcle/api-client";
+import { useApiClient } from "@arcle/auth-client";
 import { Button } from "@arcle/ui/components/button";
 import { Checkbox } from "@arcle/ui/components/checkbox";
 import {
@@ -23,7 +24,6 @@ import { toast } from "sonner";
 import { LibraryStatusDropdown } from "@/components/library-status-dropdown";
 import { SeriesCard, SeriesCardSkeleton } from "@/components/series-card";
 import { useBulkRemoveFromLibraryMutation } from "@/hooks/use-library";
-import { apiClient } from "@/lib/api";
 
 const STATUS_LABELS: Record<LibraryStatus, string> = {
   reading: "Reading",
@@ -44,6 +44,7 @@ const STATUS_ORDER: LibraryStatus[] = [
 type LibraryItemWithSeries = LibraryItem & { series?: SeriesWithChapters };
 
 function useLibraryWithSeries() {
+  const apiClient = useApiClient();
   const { data: libraryItems = [], isLoading: isLoadingLibrary } = useQuery({
     queryKey: ["library"] as const,
     queryFn: () => apiClient.users.getLibrary(),

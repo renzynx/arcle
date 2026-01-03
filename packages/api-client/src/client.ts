@@ -17,11 +17,15 @@ export type ApiClientConfig = {
   headers?: HeadersInit;
 };
 
+function getDefaultBaseURL(): string {
+  if (typeof window === "undefined") {
+    return process.env.GATEWAY_URL || "http://localhost:3000";
+  }
+  return "";
+}
+
 export function createApiClient(config: ApiClientConfig = {}) {
-  const rawBaseURL =
-    config.baseURL ??
-    process.env.NEXT_PUBLIC_GATEWAY_URL ??
-    "http://localhost:3000";
+  const rawBaseURL = config.baseURL ?? getDefaultBaseURL();
 
   const baseURL = rawBaseURL.endsWith("/")
     ? rawBaseURL.slice(0, -1)

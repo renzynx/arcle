@@ -1,6 +1,7 @@
 "use client";
 
 import type { Chapter } from "@arcle/api-client";
+import { useApiClient } from "@arcle/auth-client";
 import { useInfiniteQuery } from "@arcle/query";
 import { Input } from "@arcle/ui/components/input";
 import {
@@ -22,7 +23,6 @@ import { formatDistanceToNow } from "date-fns";
 import type { Route } from "next";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { apiClient } from "@/lib/api";
 
 const CHAPTERS_PER_PAGE = 50;
 
@@ -37,6 +37,7 @@ export function ChapterList({
   seriesSlug,
   totalChapters,
 }: ChapterListProps) {
+  const apiClient = useApiClient();
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [sortOrder, setSortOrder] = useState<"number" | "-number">("number");

@@ -1,11 +1,11 @@
 "use client";
 
 import type { LibraryItem } from "@arcle/api-client";
-import { useSessionQuery } from "@arcle/auth-client";
+import { useApiClient, useSessionQuery } from "@arcle/auth-client";
 import { useMutation, useQuery, useQueryClient } from "@arcle/query";
-import { apiClient } from "@/lib/api";
 
 export function useLibraryItem(seriesId: string | undefined) {
+  const apiClient = useApiClient();
   const { data: session } = useSessionQuery();
 
   return useQuery({
@@ -24,6 +24,7 @@ export function useLibraryItem(seriesId: string | undefined) {
 
 export function useAddToLibraryMutation() {
   const queryClient = useQueryClient();
+  const apiClient = useApiClient();
 
   return useMutation({
     mutationFn: (seriesId: string) =>
@@ -37,6 +38,7 @@ export function useAddToLibraryMutation() {
 
 export function useRemoveFromLibraryMutation() {
   const queryClient = useQueryClient();
+  const apiClient = useApiClient();
 
   return useMutation({
     mutationFn: (seriesId: string) =>
@@ -50,6 +52,7 @@ export function useRemoveFromLibraryMutation() {
 
 export function useUpdateLibraryStatusMutation() {
   const queryClient = useQueryClient();
+  const apiClient = useApiClient();
 
   return useMutation({
     mutationFn: ({
@@ -68,6 +71,7 @@ export function useUpdateLibraryStatusMutation() {
 
 export function useRemoveHistoryMutation() {
   const queryClient = useQueryClient();
+  const apiClient = useApiClient();
 
   return useMutation({
     mutationFn: (seriesId: string) => apiClient.users.removeHistory(seriesId),
@@ -79,6 +83,7 @@ export function useRemoveHistoryMutation() {
 
 export function useBulkRemoveFromLibraryMutation() {
   const queryClient = useQueryClient();
+  const apiClient = useApiClient();
 
   return useMutation({
     mutationFn: async (seriesIds: string[]) => {
@@ -94,6 +99,7 @@ export function useBulkRemoveFromLibraryMutation() {
 
 export function useBulkRemoveHistoryMutation() {
   const queryClient = useQueryClient();
+  const apiClient = useApiClient();
 
   return useMutation({
     mutationFn: async (seriesIds: string[]) => {
@@ -109,6 +115,7 @@ export function useBulkRemoveHistoryMutation() {
 
 export function useClearHistoryMutation() {
   const queryClient = useQueryClient();
+  const apiClient = useApiClient();
 
   return useMutation({
     mutationFn: () => apiClient.users.clearHistory(),
@@ -119,6 +126,7 @@ export function useClearHistoryMutation() {
 }
 
 export function useRating(seriesId: string | undefined) {
+  const apiClient = useApiClient();
   const { data: session } = useSessionQuery();
 
   return useQuery({
@@ -137,6 +145,7 @@ export function useRating(seriesId: string | undefined) {
 
 export function useAddRatingMutation() {
   const queryClient = useQueryClient();
+  const apiClient = useApiClient();
 
   return useMutation({
     mutationFn: ({ seriesId, score }: { seriesId: string; score: number }) =>
@@ -150,6 +159,7 @@ export function useAddRatingMutation() {
 
 export function useUpdateRatingMutation() {
   const queryClient = useQueryClient();
+  const apiClient = useApiClient();
 
   return useMutation({
     mutationFn: ({ seriesId, score }: { seriesId: string; score: number }) =>
@@ -163,6 +173,7 @@ export function useUpdateRatingMutation() {
 
 export function useRemoveRatingMutation() {
   const queryClient = useQueryClient();
+  const apiClient = useApiClient();
 
   return useMutation({
     mutationFn: (seriesId: string) => apiClient.users.removeRating(seriesId),

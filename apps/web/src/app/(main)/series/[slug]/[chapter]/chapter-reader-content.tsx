@@ -1,6 +1,7 @@
 "use client";
 
 import type { ChapterWithPages, Series } from "@arcle/api-client";
+import { useApiClient } from "@arcle/auth-client";
 import { useInfiniteQuery, useQuery } from "@arcle/query";
 import { Button } from "@arcle/ui/components/button";
 import type { Route } from "next";
@@ -9,7 +10,6 @@ import { useRef, useState } from "react";
 import { usePrivacySettings } from "@/hooks/use-privacy-settings";
 import { useTrackReadingHistory } from "@/hooks/use-reading-history";
 import { useTrackChapterView } from "@/hooks/use-track-view";
-import { apiClient } from "@/lib/api";
 import { ChapterNavFooter } from "./_components/chapter-nav-footer";
 import { PageGallery } from "./_components/page-gallery";
 import { ReaderHeader } from "./_components/reader-header";
@@ -34,6 +34,7 @@ export function ChapterReaderContent({
   slug,
   chapterNumber,
 }: ChapterReaderContentProps) {
+  const apiClient = useApiClient();
   const { data: privacySettings } = usePrivacySettings();
   const [open, setOpen] = useState(false);
   const chapterListRef = useRef<HTMLDivElement>(null);
@@ -73,7 +74,14 @@ export function ChapterReaderContent({
     enabled: !!chapterData?.series?.id,
   });
 
-  const allChapters = chaptersData?.pages.flatMap((page) => page.data) ?? [];
+  const allChapters = [
+    ...new Map(
+      (chaptersData?.pages.flatMap((page) => page.data) ?? []).map((ch) => [
+        ch.id,
+        ch,
+      ]),
+    ).values(),
+  ];
   const totalChapters = chapterData?.series?.chapterCount ?? 0;
 
   const {

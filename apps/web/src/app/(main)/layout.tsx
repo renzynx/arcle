@@ -4,10 +4,7 @@ import { MaintenancePage } from "@/components/maintenance-page";
 import { Navbar } from "@/components/navbar";
 import { serverApiClient } from "@/lib/api";
 
-const GATEWAY_URL =
-  process.env.GATEWAY_URL ||
-  process.env.NEXT_PUBLIC_GATEWAY_URL ||
-  "http://localhost:3000";
+const gatewayUrl = process.env.GATEWAY_URL || "http://localhost:3000";
 
 type StatusResponse = {
   maintenance: boolean;
@@ -16,8 +13,8 @@ type StatusResponse = {
 
 async function getMaintenanceStatus(): Promise<StatusResponse> {
   try {
-    const res = await fetch(`${GATEWAY_URL}/status`, {
-      next: { revalidate: 30 },
+    const res = await fetch(`${gatewayUrl}/status`, {
+      cache: "no-store",
     });
 
     if (!res.ok) {

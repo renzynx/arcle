@@ -92,6 +92,7 @@
       "name": "@arcle/auth-client",
       "version": "0.0.0",
       "dependencies": {
+        "@arcle/api-client": "workspace:*",
         "@arcle/query": "workspace:*",
         "@better-auth/passkey": "^1.4.10",
         "better-auth": "catalog:",

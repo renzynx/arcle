@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@arcle/query";
-import { authClient } from "./client";
+import { useAuthClient } from "./provider";
 
 export const authKeys = {
   all: ["auth"] as const,
@@ -9,6 +9,8 @@ export const authKeys = {
 } as const;
 
 export function useSessionQuery() {
+  const authClient = useAuthClient();
+
   return useQuery({
     queryKey: authKeys.session(),
     queryFn: async () => {
@@ -22,6 +24,7 @@ export function useSessionQuery() {
 }
 
 export function useSignInMutation() {
+  const authClient = useAuthClient();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -30,13 +33,15 @@ export function useSignInMutation() {
       if (error) throw error;
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      if ((data as { twoFactorRedirect?: boolean })?.twoFactorRedirect) return;
       queryClient.invalidateQueries({ queryKey: authKeys.session() });
     },
   });
 }
 
 export function useSignUpMutation() {
+  const authClient = useAuthClient();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -56,6 +61,7 @@ export function useSignUpMutation() {
 }
 
 export function useSignOutMutation() {
+  const authClient = useAuthClient();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -71,6 +77,8 @@ export function useSignOutMutation() {
 }
 
 export function useTokenQuery() {
+  const authClient = useAuthClient();
+
   return useQuery({
     queryKey: [...authKeys.all, "token"] as const,
     queryFn: async () => {
@@ -84,6 +92,8 @@ export function useTokenQuery() {
 }
 
 export function useEnableTwoFactorMutation() {
+  const authClient = useAuthClient();
+
   return useMutation({
     mutationFn: async (password: string) => {
       const { data, error } = await authClient.twoFactor.enable({ password });
@@ -94,6 +104,7 @@ export function useEnableTwoFactorMutation() {
 }
 
 export function useDisableTwoFactorMutation() {
+  const authClient = useAuthClient();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -109,6 +120,7 @@ export function useDisableTwoFactorMutation() {
 }
 
 export function useVerifyTotpMutation() {
+  const authClient = useAuthClient();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -123,7 +135,25 @@ export function useVerifyTotpMutation() {
   });
 }
 
+export function useVerifyBackupCodeMutation() {
+  const authClient = useAuthClient();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (params: { code: string; trustDevice?: boolean }) => {
+      const { data, error } =
+        await authClient.twoFactor.verifyBackupCode(params);
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: authKeys.session() });
+    },
+  });
+}
+
 export function usePasskeySignInMutation() {
+  const authClient = useAuthClient();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -139,6 +169,8 @@ export function usePasskeySignInMutation() {
 }
 
 export function usePasskeysQuery() {
+  const authClient = useAuthClient();
+
   return useQuery({
     queryKey: authKeys.passkeys(),
     queryFn: async () => {
@@ -150,6 +182,7 @@ export function usePasskeysQuery() {
 }
 
 export function useAddPasskeyMutation() {
+  const authClient = useAuthClient();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -167,6 +200,7 @@ export function useAddPasskeyMutation() {
 }
 
 export function useDeletePasskeyMutation() {
+  const authClient = useAuthClient();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -182,6 +216,8 @@ export function useDeletePasskeyMutation() {
 }
 
 export function useListSessionsQuery() {
+  const authClient = useAuthClient();
+
   return useQuery({
     queryKey: authKeys.sessions(),
     queryFn: async () => {
@@ -193,6 +229,7 @@ export function useListSessionsQuery() {
 }
 
 export function useRevokeSessionMutation() {
+  const authClient = useAuthClient();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -208,6 +245,7 @@ export function useRevokeSessionMutation() {
 }
 
 export function useRevokeOtherSessionsMutation() {
+  const authClient = useAuthClient();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -223,6 +261,7 @@ export function useRevokeOtherSessionsMutation() {
 }
 
 export function useUpdateUserMutation() {
+  const authClient = useAuthClient();
   const queryClient = useQueryClient();
 
   return useMutation({

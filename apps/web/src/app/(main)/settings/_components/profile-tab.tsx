@@ -1,7 +1,7 @@
 "use client";
 
 import type { User } from "@arcle/auth-client";
-import { useUpdateUserMutation } from "@arcle/auth-client";
+import { useApiClient, useUpdateUserMutation } from "@arcle/auth-client";
 import {
   Avatar,
   AvatarFallback,
@@ -22,13 +22,13 @@ import { Spinner } from "@arcle/ui/components/spinner";
 import { Camera, Check, PencilSimple, X } from "@phosphor-icons/react";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
-import { apiClient } from "@/lib/api";
 
 interface ProfileTabProps {
   user: User;
 }
 
 export function ProfileTab({ user }: ProfileTabProps) {
+  const apiClient = useApiClient();
   const [isEditingName, setIsEditingName] = useState(false);
   const [name, setName] = useState(user.name || "");
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);

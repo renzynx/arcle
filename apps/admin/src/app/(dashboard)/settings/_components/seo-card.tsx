@@ -14,9 +14,8 @@ import { Label } from "@arcle/ui/components/label";
 import { Image, Trash } from "@phosphor-icons/react";
 import type { AnyFieldApi } from "@tanstack/react-form";
 import type { ReactNode } from "react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { useUploadOgImageMutation } from "@/lib/mutations";
 import { SETTINGS_BY_GROUP } from "./constants";
 
 interface SeoCardProps {
@@ -26,18 +25,30 @@ interface SeoCardProps {
   ) => ReactNode;
   ogImageValue: string;
   onOgImageChange: (url: string) => void;
+  onPendingFileChange: (file: File | null) => void;
+  pendingFile: File | null;
 }
 
 export function SeoCard({
   renderField,
   ogImageValue,
   onOgImageChange,
+  onPendingFileChange,
+  pendingFile,
 }: SeoCardProps) {
-  const uploadMutation = useUploadOgImageMutation();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
-  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  useEffect(() => {
+    if (pendingFile) {
+      const objectUrl = URL.createObjectURL(pendingFile);
+      setPreviewUrl(objectUrl);
+      return () => URL.revokeObjectURL(objectUrl);
+    }
+    setPreviewUrl(null);
+  }, [pendingFile]);
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -46,29 +57,16 @@ export function SeoCard({
       return;
     }
 
-    const objectUrl = URL.createObjectURL(file);
-    setPreviewUrl(objectUrl);
+    onPendingFileChange(file);
 
-    try {
-      const result = await uploadMutation.mutateAsync(file);
-      onOgImageChange(result.url);
-      toast.success("OG image uploaded successfully");
-    } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Failed to upload OG image",
-      );
-      setPreviewUrl(null);
-    } finally {
-      URL.revokeObjectURL(objectUrl);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
     }
   };
 
   const handleRemoveImage = () => {
     onOgImageChange("");
-    setPreviewUrl(null);
+    onPendingFileChange(null);
   };
 
   const displayUrl = previewUrl || ogImageValue;
@@ -138,8 +136,10 @@ export function SeoCard({
             className="hidden"
           />
 
-          {uploadMutation.isPending && (
-            <p className="text-sm text-muted-foreground">Uploading...</p>
+          {pendingFile && (
+            <p className="text-sm text-muted-foreground">
+              Image will be uploaded when you save
+            </p>
           )}
         </div>
 

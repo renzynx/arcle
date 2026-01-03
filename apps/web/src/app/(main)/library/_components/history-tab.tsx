@@ -1,5 +1,6 @@
 "use client";
 
+import { useApiClient } from "@arcle/auth-client";
 import { Button } from "@arcle/ui/components/button";
 import {
   Dialog,
@@ -23,10 +24,10 @@ import {
   useBulkRemoveHistoryMutation,
   useClearHistoryMutation,
 } from "@/hooks/use-library";
-import { apiClient } from "@/lib/api";
 import { HistoryItemCard } from "./history-item-card";
 
 export function HistoryTab() {
+  const apiClient = useApiClient();
   const { data: history = [], isLoading } = useQuery({
     queryKey: ["history"] as const,
     queryFn: () => apiClient.users.getHistory(),

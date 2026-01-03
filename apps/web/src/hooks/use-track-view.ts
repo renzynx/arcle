@@ -1,8 +1,7 @@
 "use client";
 
-import type { Session } from "@arcle/auth-client";
+import { type Session, useApiClient } from "@arcle/auth-client";
 import { useEffect, useRef } from "react";
-import { apiClient } from "@/lib/api";
 
 const VIEW_CACHE_PREFIX = "arcle_view_";
 const VIEW_TTL_MS = 24 * 60 * 60 * 1000;
@@ -44,6 +43,7 @@ export function useTrackSeriesView(
   slug: string,
   options: TrackViewOptions = {},
 ) {
+  const apiClient = useApiClient();
   const { enabled = true, session } = options;
   const tracked = useRef(false);
 
@@ -53,13 +53,11 @@ export function useTrackSeriesView(
 
     if (isViewCached("series", slug)) return;
 
-    // Only track if user has an active session
-    // Skip tracking for unauthenticated users to avoid session issues
     if (!session) return;
 
     cacheView("series", slug);
     apiClient.catalog.trackSeriesViewBySlug(slug).catch(() => {});
-  }, [slug, session, enabled]);
+  }, [slug, session, enabled, apiClient]);
 }
 
 export function useTrackChapterView(
@@ -67,6 +65,7 @@ export function useTrackChapterView(
   chapterNumber: number,
   options: TrackViewOptions = {},
 ) {
+  const apiClient = useApiClient();
   const { enabled = true, session } = options;
   const tracked = useRef(false);
   const chapterId = `${seriesSlug}:${chapterNumber}`;
@@ -77,12 +76,11 @@ export function useTrackChapterView(
 
     if (isViewCached("chapter", chapterId)) return;
 
-    // Only track if user has an active session
     if (!session) return;
 
     cacheView("chapter", chapterId);
     apiClient.catalog
       .trackChapterViewBySlug(seriesSlug, chapterNumber)
       .catch(() => {});
-  }, [seriesSlug, chapterNumber, chapterId, session, enabled]);
+  }, [seriesSlug, chapterNumber, chapterId, session, enabled, apiClient]);
 }

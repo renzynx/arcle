@@ -14,14 +14,11 @@ export type SiteConfig = {
   seoCanonicalUrl: string;
 };
 
-const GATEWAY_URL =
-  process.env.GATEWAY_URL ||
-  process.env.NEXT_PUBLIC_GATEWAY_URL ||
-  "http://localhost:3000";
+const gatewayUrl = process.env.GATEWAY_URL || "http://localhost:3000";
 
 export const getSiteConfig = cache(async (): Promise<SiteConfig> => {
   try {
-    const res = await fetch(`${GATEWAY_URL}/api/catalog/settings`, {
+    const res = await fetch(`${gatewayUrl}/api/catalog/settings`, {
       next: { revalidate: 60 },
     });
 

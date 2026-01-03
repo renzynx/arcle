@@ -1,8 +1,8 @@
 "use client";
 
+import { useApiClient } from "@arcle/auth-client";
 import { useMutation, useQueryClient } from "@arcle/query";
 import { useEffect, useRef } from "react";
-import { apiClient } from "@/lib/api";
 
 const HISTORY_CACHE_PREFIX = "arcle_history_";
 const HISTORY_TTL_MS = 5 * 60 * 1000;
@@ -37,6 +37,7 @@ function cacheHistory(seriesId: string, chapterNumber: number): void {
 
 export function useTrackReadingHistoryMutation() {
   const queryClient = useQueryClient();
+  const apiClient = useApiClient();
 
   return useMutation({
     mutationFn: ({

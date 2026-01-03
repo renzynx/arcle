@@ -1,13 +1,16 @@
 "use client";
 
-import type { SettingKey } from "@arcle/api-client";
+import { SETTING_KEYS, type SettingKey } from "@arcle/api-client";
 import { Button } from "@arcle/ui/components/button";
 import { FloppyDisk } from "@phosphor-icons/react";
 import { useForm } from "@tanstack/react-form";
 import type { ReactNode } from "react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
-import { useBulkUpdateSettingsMutation } from "@/lib/mutations";
+import {
+  useBulkUpdateSettingsMutation,
+  useUploadOgImageMutation,
+} from "@/lib/mutations";
 import {
   getDefaultValues,
   SETTINGS_BY_GROUP,
@@ -24,37 +27,92 @@ interface SettingsFormProps {
 
 export function SettingsForm({ initialValues }: SettingsFormProps) {
   const bulkUpdateMutation = useBulkUpdateSettingsMutation();
+  const uploadOgImageMutation = useUploadOgImageMutation();
   const topButtonWrapperRef = useRef<HTMLDivElement>(null);
   const [showBottomBar, setShowBottomBar] = useState(false);
+  const [pendingOgFile, setPendingOgFile] = useState<File | null>(null);
+  const [currentValues, setCurrentValues] = useState<SettingsFormValues | null>(
+    null,
+  );
 
-  const mergedValues = {
-    ...getDefaultValues(),
-    ...initialValues,
-  } as SettingsFormValues;
+  const mergedValues = useMemo(
+    () =>
+      ({
+        ...getDefaultValues(),
+        ...initialValues,
+      }) as SettingsFormValues,
+    [initialValues],
+  );
+
+  const isDirty = useMemo(() => {
+    if (pendingOgFile !== null) return true;
+    if (!currentValues) return false;
+
+    for (const key of SETTING_KEYS) {
+      if (currentValues[key] !== mergedValues[key]) {
+        return true;
+      }
+    }
+    return false;
+  }, [currentValues, mergedValues, pendingOgFile]);
 
   const form = useForm({
     defaultValues: mergedValues,
     onSubmit: async ({ value }) => {
-      const updates = Object.entries(value).map(([key, val]) => ({
-        key,
-        value: val,
-      }));
-
       try {
+        let ogImageUrl = value.seo_og_image;
+
+        if (pendingOgFile) {
+          const result = await uploadOgImageMutation.mutateAsync(pendingOgFile);
+          ogImageUrl = result.url;
+          setPendingOgFile(null);
+        }
+
+        const validKeys = new Set<string>(SETTING_KEYS);
+        const updates = Object.entries({
+          ...value,
+          seo_og_image: ogImageUrl,
+        })
+          .filter(([key]) => validKeys.has(key))
+          .map(([key, val]) => ({
+            key,
+            value: val,
+          }));
+
         await bulkUpdateMutation.mutateAsync(updates);
         toast.success("Settings saved successfully");
-      } catch {
-        toast.error("Failed to save settings");
+      } catch (error) {
+        toast.error(
+          error instanceof Error ? error.message : "Failed to save settings",
+        );
       }
     },
   });
+
+  const handleFieldChange = useCallback(() => {
+    setCurrentValues(form.state.values as SettingsFormValues);
+  }, [form.state.values]);
 
   const renderField = (
     key: SettingKey,
     render: (
       field: Parameters<Parameters<typeof form.Field>[0]["children"]>[0],
     ) => ReactNode,
-  ) => <form.Field key={key} name={key} children={render} />;
+  ) => (
+    <form.Field key={key} name={key}>
+      {(field) => {
+        const originalOnChange = field.handleChange;
+        const wrappedField = {
+          ...field,
+          handleChange: (value: string) => {
+            originalOnChange(value);
+            setTimeout(handleFieldChange, 0);
+          },
+        };
+        return render(wrappedField as typeof field);
+      }}
+    </form.Field>
+  );
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: form.reset is stable
   useEffect(() => {
@@ -145,7 +203,12 @@ export function SettingsForm({ initialValues }: SettingsFormProps) {
           <SeoCard
             renderField={renderField}
             ogImageValue={field.state.value}
-            onOgImageChange={(url) => field.handleChange(url)}
+            onOgImageChange={(url) => {
+              field.handleChange(url);
+              setTimeout(handleFieldChange, 0);
+            }}
+            pendingFile={pendingOgFile}
+            onPendingFileChange={setPendingOgFile}
           />
         )}
       </form.Field>
@@ -153,7 +216,7 @@ export function SettingsForm({ initialValues }: SettingsFormProps) {
       <SecurityCard />
 
       <FloatingSaveBar
-        show={showBottomBar && form.state.isDirty}
+        show={showBottomBar && isDirty}
         isSubmitting={form.state.isSubmitting}
       />
     </form>
