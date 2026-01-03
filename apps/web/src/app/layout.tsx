@@ -7,7 +7,9 @@ import { getSiteConfig } from "@/lib/site-config";
 
 const nunitoSans = Nunito_Sans({ variable: "--font-sans" });
 
-const gatewayUrl = process.env.GATEWAY_URL || "http://localhost:3000";
+function getGatewayUrl() {
+  return process.env.GATEWAY_URL || "http://localhost:3000";
+}
 
 export async function generateMetadata(): Promise<Metadata> {
   const config = await getSiteConfig();
@@ -80,7 +82,7 @@ export default async function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className={nunitoSans.variable}>
       <body className="antialiased">
-        <Providers gatewayUrl={gatewayUrl}>
+        <Providers gatewayUrl={getGatewayUrl()}>
           <SiteConfigProvider config={siteConfig}>
             {children}
           </SiteConfigProvider>
