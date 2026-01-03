@@ -139,6 +139,7 @@ services:
       <<: *common-env
       CATALOG_PORT: 6000
       DATABASE_URL: postgres://arcle:arcle@postgres:5432/arcle_catalog
+      GATEWAY_URL: ${GATEWAY_URL:-http://localhost:3000}
     depends_on:
       postgres:
         condition: service_healthy
