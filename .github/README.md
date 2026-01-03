@@ -240,7 +240,7 @@ SEARCH_PROVIDER=postgres
 | `BETTER_AUTH_SECRET` | Secret key for auth token signing | `change-me-in-production` |
 | `GATEWAY_URL` | Public URL of the API gateway (used for auth and API calls) | `http://localhost:3000` |
 | `TRUSTED_ORIGINS` | Comma-separated list of allowed origins for auth (web & admin URLs) | `http://localhost:8000,http://localhost:9000` |
-| `ADMIN_ORIGIN` | Admin dashboard URL (used to bypass maintenance mode) | `http://localhost:9000` |
+| `ADMIN_ORIGIN` | Admin dashboard URL (required for maintenance mode bypass) | `http://localhost:9000` |
 | `SEARCH_PROVIDER` | Search backend (`postgres` or `typesense`) | `postgres` |
 
 ### Volumes
