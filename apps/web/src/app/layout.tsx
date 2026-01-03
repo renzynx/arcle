@@ -1,15 +1,12 @@
 import type { Metadata } from "next";
 import { Nunito_Sans } from "next/font/google";
 import "@arcle/ui/globals.css";
+import { connection } from "next/server";
 import { Providers } from "@/components/providers";
 import { SiteConfigProvider } from "@/components/site-config-provider";
 import { getSiteConfig } from "@/lib/site-config";
 
 const nunitoSans = Nunito_Sans({ variable: "--font-sans" });
-
-function getGatewayUrl() {
-  return process.env.GATEWAY_URL || "http://localhost:3000";
-}
 
 export async function generateMetadata(): Promise<Metadata> {
   const config = await getSiteConfig();
@@ -77,12 +74,14 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  await connection();
+  const gatewayUrl = process.env.GATEWAY_URL || "http://localhost:3000";
   const siteConfig = await getSiteConfig();
 
   return (
     <html lang="en" suppressHydrationWarning className={nunitoSans.variable}>
       <body className="antialiased">
-        <Providers gatewayUrl={getGatewayUrl()}>
+        <Providers gatewayUrl={gatewayUrl}>
           <SiteConfigProvider config={siteConfig}>
             {children}
           </SiteConfigProvider>

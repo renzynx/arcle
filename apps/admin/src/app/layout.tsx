@@ -1,13 +1,10 @@
 import type { Metadata } from "next";
 import { Nunito_Sans } from "next/font/google";
 import "@arcle/ui/globals.css";
+import { connection } from "next/server";
 import { Providers } from "@/components/providers";
 
 const nunitoSans = Nunito_Sans({ variable: "--font-sans" });
-
-function getGatewayUrl() {
-  return process.env.GATEWAY_URL || "http://localhost:3000";
-}
 
 export const metadata: Metadata = {
   title: "Admin",
@@ -26,11 +23,14 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  await connection();
+  const gatewayUrl = process.env.GATEWAY_URL || "http://localhost:3000";
+
   return (
     <html lang="en" suppressHydrationWarning className={nunitoSans.variable}>
       <head>
@@ -44,7 +44,7 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased">
-        <Providers gatewayUrl={getGatewayUrl()}>{children}</Providers>
+        <Providers gatewayUrl={gatewayUrl}>{children}</Providers>
       </body>
     </html>
   );
