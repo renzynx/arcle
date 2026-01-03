@@ -46,7 +46,7 @@ async function createAdmin() {
       password = next;
       i++;
     } else if (arg === "--name" || arg === "-n") {
-      name = next;
+      name = next ?? "Admin";
       i++;
     }
   }
