@@ -3,7 +3,7 @@ import { dehydrate, getQueryClient, HydrationBoundary } from "@arcle/query";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { cache } from "react";
-import { serverApiClient } from "@/lib/api";
+import { getServerApiClient } from "@/lib/api";
 import { createAuthenticatedServerClient } from "@/lib/api.server";
 import { SeriesPageContent } from "../_components/series-page-content";
 
@@ -12,7 +12,7 @@ interface SeriesPageProps {
 }
 
 const getSeriesBySlug = cache(async (slug: string) => {
-  const response = await serverApiClient.catalog.getSeriesBySlug(slug);
+  const response = await getServerApiClient().catalog.getSeriesBySlug(slug);
   return response as unknown as SeriesWithChapters;
 });
 

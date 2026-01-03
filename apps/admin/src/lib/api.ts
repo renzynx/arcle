@@ -3,6 +3,10 @@ import { getAccessToken } from "@arcle/auth-client";
 
 export const apiClient = createApiClient({ getToken: getAccessToken });
 
-const serverBaseURL = process.env.GATEWAY_URL || "http://localhost:3000";
+function getServerBaseURL() {
+  return process.env.GATEWAY_URL || "http://localhost:3000";
+}
 
-export const serverApiClient = createApiClient({ baseURL: serverBaseURL });
+export function getServerApiClient() {
+  return createApiClient({ baseURL: getServerBaseURL() });
+}

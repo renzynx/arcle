@@ -1,5 +1,5 @@
 import { dehydrate, getQueryClient, HydrationBoundary } from "@arcle/query";
-import { serverApiClient } from "@/lib/api";
+import { getServerApiClient } from "@/lib/api";
 import { FeaturedCarousel } from "./_components/featured-carousel";
 import {
   LatestSeriesSection,
@@ -8,17 +8,16 @@ import {
 
 export default async function HomePage() {
   const queryClient = getQueryClient();
+  const apiClient = getServerApiClient();
 
   await Promise.all([
     queryClient.prefetchQuery({
       queryKey: ["series", "popular", 6] as const,
-      queryFn: () =>
-        serverApiClient.catalog.getSeries({ limit: 6, sort: "popular" }),
+      queryFn: () => apiClient.catalog.getSeries({ limit: 6, sort: "popular" }),
     }),
     queryClient.prefetchQuery({
       queryKey: ["series", "latest", 12] as const,
-      queryFn: () =>
-        serverApiClient.catalog.getSeries({ limit: 12, sort: "latest" }),
+      queryFn: () => apiClient.catalog.getSeries({ limit: 12, sort: "latest" }),
     }),
   ]);
 

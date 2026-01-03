@@ -3,7 +3,7 @@ import { dehydrate, getQueryClient, HydrationBoundary } from "@arcle/query";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { cache } from "react";
-import { serverApiClient } from "@/lib/api";
+import { getServerApiClient } from "@/lib/api";
 import { ChapterReaderContent } from "./chapter-reader-content";
 
 interface ChapterPageProps {
@@ -21,7 +21,7 @@ function parseChapterNumber(chapter: string): number | null {
 }
 
 const getChapterBySlug = cache(async (slug: string, chapterNumber: number) => {
-  const response = await serverApiClient.catalog.getChapterBySlug(
+  const response = await getServerApiClient().catalog.getChapterBySlug(
     slug,
     chapterNumber,
   );
