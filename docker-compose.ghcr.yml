@@ -26,8 +26,6 @@ services:
       POSTGRES_USER: arcle
       POSTGRES_PASSWORD: arcle
       POSTGRES_DB: arcle
-    ports:
-      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./docker/postgres/init-databases.sh:/docker-entrypoint-initdb.d/init-databases.sh:ro
@@ -42,8 +40,6 @@ services:
   redis:
     image: redis:7-alpine
     container_name: arcle-redis
-    ports:
-      - "6379:6379"
     volumes:
       - redis_data:/data
     networks:
@@ -63,8 +59,6 @@ services:
       TYPESENSE_API_KEY: arcle-typesense-key
       TYPESENSE_DATA_DIR: /data
       TYPESENSE_ENABLE_CORS: "true"
-    ports:
-      - "8108:8108"
     volumes:
       - typesense_data:/data
     networks:
@@ -98,8 +92,6 @@ services:
     <<: *service-common
     image: ghcr.io/renzynx/arcle-auth:${IMAGE_TAG:-latest}
     container_name: arcle-auth
-    ports:
-      - "4000:4000"
     environment:
       <<: *common-env
       AUTH_PORT: 4000
@@ -117,8 +109,6 @@ services:
     <<: *service-common
     image: ghcr.io/renzynx/arcle-users:${IMAGE_TAG:-latest}
     container_name: arcle-users
-    ports:
-      - "5000:5000"
     environment:
       <<: *common-env
       USERS_PORT: 5000
@@ -133,8 +123,6 @@ services:
     <<: *service-common
     image: ghcr.io/renzynx/arcle-catalog:${IMAGE_TAG:-latest}
     container_name: arcle-catalog
-    ports:
-      - "6000:6000"
     environment:
       <<: *common-env
       CATALOG_PORT: 6000
@@ -149,8 +137,6 @@ services:
     <<: *service-common
     image: ghcr.io/renzynx/arcle-media:${IMAGE_TAG:-latest}
     container_name: arcle-media
-    ports:
-      - "7000:7000"
     environment:
       <<: *common-env
       MEDIA_PORT: 7000
