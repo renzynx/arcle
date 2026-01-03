@@ -263,6 +263,29 @@ Arcle supports multiple search backends:
 
 ---
 
+## ⚡ Turbo Remote Cache
+
+This project uses [Turborepo Remote Cache](https://turbo.build/repo/docs/core-concepts/remote-caching) for faster CI/CD builds.
+
+### Setup for CI (GitHub Actions)
+
+1. Create a Vercel account and link it to Turborepo
+2. Generate a token at [vercel.com/account/tokens](https://vercel.com/account/tokens)
+3. Add the following to your GitHub repository:
+   - **Secret**: `TURBO_TOKEN` - Your Vercel token
+   - **Variable**: `TURBO_TEAM` - Your Vercel team slug (or username)
+
+### Setup for Local Development (Optional)
+
+```bash
+npx turbo login
+npx turbo link
+```
+
+This enables cache sharing between CI and local development.
+
+---
+
 ## 📜 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](../LICENSE) file for details.
