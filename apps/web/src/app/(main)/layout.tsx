@@ -1,9 +1,8 @@
-import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { dehydrate, getQueryClient, HydrationBoundary } from "@arcle/query";
 import type { ReactNode } from "react";
 import { MaintenancePage } from "@/components/maintenance-page";
 import { Navbar } from "@/components/navbar";
 import { serverApiClient } from "@/lib/api";
-import { getQueryClient } from "@/lib/get-query-client";
 
 const GATEWAY_URL =
   process.env.GATEWAY_URL ||

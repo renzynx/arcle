@@ -1,10 +1,9 @@
 import type { ChapterWithPages, Series } from "@arcle/api-client";
-import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { dehydrate, getQueryClient, HydrationBoundary } from "@arcle/query";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { cache } from "react";
 import { serverApiClient } from "@/lib/api";
-import { getQueryClient } from "@/lib/get-query-client";
 import { ChapterReaderContent } from "./chapter-reader-content";
 
 interface ChapterPageProps {

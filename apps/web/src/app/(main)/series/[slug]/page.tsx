@@ -1,11 +1,10 @@
 import type { SeriesWithChapters } from "@arcle/api-client";
-import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { dehydrate, getQueryClient, HydrationBoundary } from "@arcle/query";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { cache } from "react";
 import { serverApiClient } from "@/lib/api";
 import { createAuthenticatedServerClient } from "@/lib/api.server";
-import { getQueryClient } from "@/lib/get-query-client";
 import { SeriesPageContent } from "../_components/series-page-content";
 
 interface SeriesPageProps {

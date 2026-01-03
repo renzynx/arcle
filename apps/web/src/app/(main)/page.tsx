@@ -1,6 +1,5 @@
-import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { dehydrate, getQueryClient, HydrationBoundary } from "@arcle/query";
 import { serverApiClient } from "@/lib/api";
-import { getQueryClient } from "@/lib/get-query-client";
 import { FeaturedCarousel } from "./_components/featured-carousel";
 import {
   LatestSeriesSection,
