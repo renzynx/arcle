@@ -14,8 +14,8 @@ export function Providers({
   gatewayUrl: string;
 }) {
   return (
-    <AuthProvider gatewayUrl={gatewayUrl}>
-      <QueryProvider>
+    <QueryProvider>
+      <AuthProvider gatewayUrl={gatewayUrl}>
         <NextThemesProvider
           attribute="class"
           defaultTheme="system"
@@ -26,7 +26,7 @@ export function Providers({
           {children}
           <Toaster />
         </NextThemesProvider>
-      </QueryProvider>
-    </AuthProvider>
+      </AuthProvider>
+    </QueryProvider>
   );
 }
