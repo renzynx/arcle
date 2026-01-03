@@ -216,7 +216,7 @@ For production, create a `.env` file at the root:
 
 ```env
 BETTER_AUTH_SECRET=your-production-secret
-BETTER_AUTH_URL=https://auth.your-domain.com
+BETTER_AUTH_URL=https://api.your-domain.com
 NEXT_PUBLIC_GATEWAY_URL=https://api.your-domain.com
 TRUSTED_ORIGINS=https://your-domain.com,https://admin.your-domain.com
 SEARCH_PROVIDER=postgres
@@ -225,7 +225,7 @@ SEARCH_PROVIDER=postgres
 | Variable | Description | Default |
 |----------|-------------|---------|
 | `BETTER_AUTH_SECRET` | Secret key for auth token signing | `change-me-in-production` |
-| `BETTER_AUTH_URL` | Public URL of the auth service | `http://localhost:4000` |
+| `BETTER_AUTH_URL` | Public URL of the API gateway (auth is proxied through gateway) | `http://localhost:3000` |
 | `NEXT_PUBLIC_GATEWAY_URL` | Public URL of the API gateway | `http://localhost:3000` |
 | `TRUSTED_ORIGINS` | Comma-separated list of allowed origins for auth (web & admin URLs) | `http://localhost:8000,http://localhost:9000` |
 | `SEARCH_PROVIDER` | Search backend (`postgres` or `typesense`) | `postgres` |
