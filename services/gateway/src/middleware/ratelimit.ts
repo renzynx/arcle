@@ -7,6 +7,7 @@ import {
   RateLimitPresets,
 } from "@arcle/cache";
 import type { Context, MiddlewareHandler } from "hono";
+import { config as gatewayConfig } from "../config";
 
 type RoutePattern = {
   pattern: RegExp;
@@ -67,12 +68,18 @@ export const rateLimiter: MiddlewareHandler = async (c: Context, next) => {
     }
   }
 
+  // Skip rate limiting for requests from admin origin
+  const origin = c.req.header("origin");
+  if (origin && origin === gatewayConfig.adminOrigin) {
+    return next();
+  }
+
   const headers = extractClientIpHeaders(c);
   const identifier = getClientIdentifier(headers);
-  const { config, endpoint } = getConfigForPath(c.req.path);
+  const { config: rateLimitConfig, endpoint } = getConfigForPath(c.req.path);
 
-  const result = await checkRateLimit(identifier, endpoint, config);
-  const rateLimitHeaders = getRateLimitHeaders(result, config);
+  const result = await checkRateLimit(identifier, endpoint, rateLimitConfig);
+  const rateLimitHeaders = getRateLimitHeaders(result, rateLimitConfig);
 
   for (const [key, value] of Object.entries(rateLimitHeaders)) {
     c.header(key, value);
