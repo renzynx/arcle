@@ -81,9 +81,7 @@ export function useApiClient(): ApiClient {
   return context.apiClient;
 }
 
-export function useSession() {
-  return useAuthClient().useSession();
-}
+export { useSessionQuery as useSession } from "./queries";
 
 const TOKEN_STALE_TIME = 4 * 60 * 1000;
 
