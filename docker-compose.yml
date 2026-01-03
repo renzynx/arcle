@@ -106,7 +106,7 @@ services:
       AUTH_PORT: 4000
       DATABASE_URL: postgres://arcle:arcle@postgres:5432/arcle_auth
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:-change-me-in-production}
-      BETTER_AUTH_URL: ${BETTER_AUTH_URL:-http://localhost:3000}
+      BETTER_AUTH_URL: ${NEXT_PUBLIC_GATEWAY_URL:-http://localhost:3000}
       TRUSTED_ORIGINS: ${TRUSTED_ORIGINS:-http://localhost:8000,http://localhost:9000}
     depends_on:
       postgres:
