@@ -184,6 +184,16 @@ bun run services/auth/src/cli.ts admin:create --email <email> --password <passwo
 bun run services/auth/src/cli.ts admin:list
 ```
 
+**Using CLI in Docker:**
+
+```bash
+# Create an admin inside the auth container
+docker compose exec auth bun run cli admin:create --email <email> --password <password>
+
+# List all admins
+docker compose exec auth bun run cli admin:list
+```
+
 ---
 
 ## 🐳 Production Deployment
