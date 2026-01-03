@@ -3,8 +3,32 @@ name: Build and Push Docker Images
 on:
   push:
     branches: [main]
+    paths:
+      - "apps/**"
+      - "packages/**"
+      - "services/**"
+      - "Dockerfile.*"
+      - "docker-compose.yml"
+      - "package.json"
+      - "bun.lock"
+      - "turbo.json"
+      - "tsconfig.json"
+      - "biome.jsonc"
+      - ".github/workflows/build-images.yml"
   pull_request:
     branches: [main]
+    paths:
+      - "apps/**"
+      - "packages/**"
+      - "services/**"
+      - "Dockerfile.*"
+      - "docker-compose.yml"
+      - "package.json"
+      - "bun.lock"
+      - "turbo.json"
+      - "tsconfig.json"
+      - "biome.jsonc"
+      - ".github/workflows/build-images.yml"
 
 env:
   REGISTRY: ghcr.io
