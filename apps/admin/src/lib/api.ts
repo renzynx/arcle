@@ -1,12 +1,11 @@
 import { createApiClient } from "@arcle/api-client";
 import { getAccessToken } from "@arcle/auth-client";
+import { connection } from "next/server";
 
 export const apiClient = createApiClient({ getToken: getAccessToken });
 
-function getServerBaseURL() {
-  return process.env.GATEWAY_URL || "http://localhost:3000";
-}
-
-export function getServerApiClient() {
-  return createApiClient({ baseURL: getServerBaseURL() });
+export async function getServerApiClient() {
+  await connection();
+  const baseURL = process.env.GATEWAY_URL || "http://localhost:3000";
+  return createApiClient({ baseURL });
 }

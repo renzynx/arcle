@@ -21,7 +21,8 @@ function parseChapterNumber(chapter: string): number | null {
 }
 
 const getChapterBySlug = cache(async (slug: string, chapterNumber: number) => {
-  const response = await getServerApiClient().catalog.getChapterBySlug(
+  const apiClient = await getServerApiClient();
+  const response = await apiClient.catalog.getChapterBySlug(
     slug,
     chapterNumber,
   );

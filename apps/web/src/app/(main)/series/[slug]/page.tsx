@@ -12,7 +12,8 @@ interface SeriesPageProps {
 }
 
 const getSeriesBySlug = cache(async (slug: string) => {
-  const response = await getServerApiClient().catalog.getSeriesBySlug(slug);
+  const apiClient = await getServerApiClient();
+  const response = await apiClient.catalog.getSeriesBySlug(slug);
   return response as unknown as SeriesWithChapters;
 });
 

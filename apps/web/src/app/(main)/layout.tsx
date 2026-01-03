@@ -1,12 +1,9 @@
 import { dehydrate, getQueryClient, HydrationBoundary } from "@arcle/query";
+import { connection } from "next/server";
 import type { ReactNode } from "react";
 import { MaintenancePage } from "@/components/maintenance-page";
 import { Navbar } from "@/components/navbar";
 import { getServerApiClient } from "@/lib/api";
-
-function getGatewayUrl() {
-  return process.env.GATEWAY_URL || "http://localhost:3000";
-}
 
 type StatusResponse = {
   maintenance: boolean;
@@ -14,8 +11,11 @@ type StatusResponse = {
 };
 
 async function getMaintenanceStatus(): Promise<StatusResponse> {
+  await connection();
+  const gatewayUrl = process.env.GATEWAY_URL || "http://localhost:3000";
+
   try {
-    const res = await fetch(`${getGatewayUrl()}/status`, {
+    const res = await fetch(`${gatewayUrl}/status`, {
       cache: "no-store",
     });
 
@@ -41,10 +41,11 @@ export default async function MainLayout({
   }
 
   const queryClient = getQueryClient();
+  const apiClient = await getServerApiClient();
 
   await queryClient.prefetchQuery({
     queryKey: ["genres"] as const,
-    queryFn: () => getServerApiClient().catalog.getGenres(),
+    queryFn: () => apiClient.catalog.getGenres(),
   });
 
   return (

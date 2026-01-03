@@ -8,7 +8,7 @@ import {
 
 export default async function HomePage() {
   const queryClient = getQueryClient();
-  const apiClient = getServerApiClient();
+  const apiClient = await getServerApiClient();
 
   await Promise.all([
     queryClient.prefetchQuery({
