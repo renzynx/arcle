@@ -16,6 +16,7 @@ Arcle is a modern, self-hosted manga and comic reader platform. Built with a foc
 ## 📖 Table of Contents
 
 - [Overview](#-overview)
+- [Features](#-features)
 - [Architecture](#-architecture)
 - [Tech Stack](#-tech-stack)
 - [Project Structure](#-project-structure)
@@ -27,6 +28,7 @@ Arcle is a modern, self-hosted manga and comic reader platform. Built with a foc
   - [Docker Compose](#docker-compose)
   - [Environment Variables](#environment-variables)
 - [Search Providers](#-search-providers)
+- [Security](#-security)
 - [Contributing](#-contributing)
 
 ---
@@ -56,6 +58,17 @@ Arcle is designed as a monorepo containing multiple applications and services th
 - **`packages/events`**: Redis pub/sub for inter-service communication.
 - **`packages/queue`**: BullMQ-based job queuing.
 - **`packages/search`**: Search provider abstraction (PostgreSQL or Typesense).
+
+---
+
+## ✨ Features
+
+- **Two-Factor Authentication (2FA)**: Users can enable TOTP-based 2FA with authenticator apps. Backup codes are supported for account recovery.
+- **Maintenance Mode**: Admins can enable maintenance mode to block access to the web app while keeping the admin dashboard accessible.
+- **Reading History & Library**: Track reading progress and manage personal manga libraries.
+- **Full-Text Search**: Search across all series with PostgreSQL or Typesense.
+- **Image Optimization**: Automatic image processing and optimization via Sharp.
+- **Mobile-First Design**: Responsive reading experience optimized for all devices.
 
 ---
 
@@ -227,6 +240,7 @@ SEARCH_PROVIDER=postgres
 | `NEXT_PUBLIC_GATEWAY_URL` | Public URL of the API gateway (also used for auth) | `http://localhost:3000` |
 | `TRUSTED_ORIGINS` | Comma-separated list of allowed origins for auth (web & admin URLs) | `http://localhost:8000,http://localhost:9000` |
 | `SEARCH_PROVIDER` | Search backend (`postgres` or `typesense`) | `postgres` |
+| `ADMIN_ORIGIN` | Admin dashboard URL (used to bypass maintenance mode) | `http://localhost:9000` |
 
 ### Volumes
 
@@ -290,6 +304,22 @@ npx turbo link
 ```
 
 This enables cache sharing between CI and local development.
+
+---
+
+## 🔐 Security
+
+### Two-Factor Authentication
+- Users can enable 2FA from their account settings
+- Supports TOTP (Time-based One-Time Password) with any authenticator app (Google Authenticator, Authy, etc.)
+- Backup codes are generated for account recovery if the authenticator device is lost
+- "Trust this device" option to skip 2FA on trusted devices for 30 days
+
+### Maintenance Mode
+- Admins can enable maintenance mode from the admin dashboard settings
+- When enabled, the web app shows a maintenance page to users
+- Admin dashboard remains accessible via the `ADMIN_ORIGIN` setting
+- Useful for performing updates or database migrations
 
 ---
 
