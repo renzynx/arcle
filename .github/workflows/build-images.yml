@@ -35,8 +35,35 @@ env:
   IMAGE_PREFIX: ghcr.io/${{ github.repository_owner }}/arcle
 
 jobs:
+  changes:
+    name: Detect Changes
+    runs-on: ubuntu-latest
+    outputs:
+      services: ${{ steps.filter.outputs.services }}
+      apps: ${{ steps.filter.outputs.apps }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check for changes
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            services:
+              - 'services/**'
+              - 'packages/**'
+              - 'Dockerfile.service'
+              - 'Dockerfile.service-worker'
+            apps:
+              - 'apps/**'
+              - 'packages/**'
+              - 'Dockerfile.nextjs'
+
   build-services:
     name: Build Service Images
+    needs: [changes]
+    if: needs.changes.outputs.services == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -96,6 +123,8 @@ jobs:
 
   build-apps:
     name: Build App Images
+    needs: [changes]
+    if: needs.changes.outputs.apps == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: read
