@@ -12,13 +12,26 @@
       "outputs": [".next/**", "!.next/cache/**", "dist"]
     },
     "typecheck": {
-      "dependsOn": ["^typecheck"]
+      "dependsOn": ["^typecheck"],
+      "inputs": ["**/*.ts", "**/*.tsx", "tsconfig.json"],
+      "outputs": []
     },
     "dev": {
       "cache": false,
       "persistent": true
     },
-    "//#format-and-lint": {},
+    "//#format-and-lint": {
+      "inputs": [
+        "**/*.ts",
+        "**/*.tsx",
+        "**/*.js",
+        "**/*.jsx",
+        "**/*.json",
+        "**/*.jsonc",
+        "biome.jsonc"
+      ],
+      "outputs": []
+    },
     "//#format-and-lint:fix": {
       "cache": false
     },
