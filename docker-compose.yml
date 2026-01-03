@@ -197,7 +197,7 @@ services:
     ports:
       - "8000:3000"
     environment:
-      GATEWAY_URL: http://gateway:3000
+      GATEWAY_URL: ${GATEWAY_URL:-http://gateway:3000}
     depends_on:
       - gateway
 
@@ -212,7 +212,7 @@ services:
     ports:
       - "9000:3000"
     environment:
-      GATEWAY_URL: http://gateway:3000
+      GATEWAY_URL: ${GATEWAY_URL:-http://gateway:3000}
     depends_on:
       - gateway
 
