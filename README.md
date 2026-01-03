@@ -217,6 +217,29 @@ SEARCH_PROVIDER=postgres
 - `redis_data`: Persistent cache and queue data.
 - `media_uploads`: All uploaded images (covers, pages, avatars).
 
+### Scaling with Replicas (Optional)
+
+For high-traffic deployments, use the scaling override to run multiple replicas behind nginx:
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.scale.yml up -d
+```
+
+This adds:
+- **nginx** load balancer on ports 80 (API), 8000 (web), 9000 (admin)
+- Multiple replicas for gateway, catalog, media, users, web, and admin
+
+Configure replica counts via environment variables:
+
+```env
+GATEWAY_REPLICAS=3
+CATALOG_REPLICAS=3
+MEDIA_REPLICAS=2
+USERS_REPLICAS=2
+WEB_REPLICAS=2
+ADMIN_REPLICAS=2
+```
+
 ---
 
 ## 🔍 Search Providers
