@@ -1,7 +1,7 @@
 export const config = {
   port: Number(Bun.env.GATEWAY_PORT) || 3000,
   redisUrl: Bun.env.REDIS_URL || "redis://localhost:6379",
-  allowedOrigins: Bun.env.ALLOWED_ORIGINS?.split(",") || [
+  allowedOrigins: Bun.env.TRUSTED_ORIGINS?.split(",") || [
     "http://localhost:8000",
     "http://localhost:9000",
   ],
